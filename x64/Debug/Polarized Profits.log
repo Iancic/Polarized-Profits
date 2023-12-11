@@ -1,0 +1,24 @@
+﻿C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.CppBuild.targets(517,5): warning MSB8028: The intermediate directory (x64\Debug\) contains files shared from another project (Intake.vcxproj).  This can lead to incorrect clean and rebuild behavior.
+  main.cpp
+D:\Game Development\Projects\Polarized-Profits\Magnet.h(43,65): warning C4244: 'argument': conversion from 'T' to 'float', possible loss of data
+          with
+          [
+              T=unsigned int
+          ]
+D:\Game Development\Projects\Polarized-Profits\Coin.h(44,53): warning C4244: 'argument': conversion from 'T' to 'float', possible loss of data
+          with
+          [
+              T=unsigned int
+          ]
+D:\Game Development\Projects\Polarized-Profits\main.cpp(76,70): warning C4244: 'argument': conversion from 'T' to 'float', possible loss of data
+          with
+          [
+              T=int
+          ]
+D:\Game Development\Projects\Polarized-Profits\main.cpp(76,52): warning C4244: 'argument': conversion from 'T' to 'float', possible loss of data
+          with
+          [
+              T=int
+          ]
+D:\Game Development\Projects\Polarized-Profits\Magnet.h(102): warning C4715: 'Magnet::return_state_color': not all control paths return a value
+  Polarized Profits.vcxproj -> D:\Game Development\Projects\Polarized-Profits\x64\Debug\Polarized Profits.exe
