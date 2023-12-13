@@ -5,6 +5,9 @@
 
 #include "Magnet.h"
 #include "Coin.h"
+#include "Pig.h"
+#include "Hand.h"
+#include "TextUI.h"
 //Classes
 
 int main()
@@ -14,8 +17,18 @@ int main()
     int window_width = 800;
     sf::RenderWindow window(sf::VideoMode(window_height, window_width), "Polarized Profits");
 
+    //Delta Time Clock
+    sf::Clock clock;
+    float maxRoundTime = 120.f;
+    float currentRoundTime = maxRoundTime;
+    float coinSpawnR = 2.5f;
+    float CurrentCoinSpawnR = 0.f;
+
     //Frame Rate
     window.setFramerateLimit(60);
+
+    //Game Logic
+    float balance = 0.f;
 
     //Directions For Magnet Movement
     float dirLeft = 0.f, dirRight = 0.f, dirUp = 0.f, dirDown = 0.f;
@@ -25,11 +38,20 @@ int main()
 
     //Objects
     std::vector<Coin> coins;
-    Magnet magnet(350, 400, 12000);
+    Magnet magnet(350, 400, 5000);
+    Pig pig(500, 500);
+    TextUI Balance(sf::Color::Black, 35);
+    TextUI Timer(sf::Color::Black, 25);
 
     //Main Run Loop
     while (window.isOpen())
     {
+        //Delta Time
+        sf::Time deltaTime = clock.restart();
+
+        //Window Timer. -1 Second 
+        currentRoundTime -= deltaTime.asSeconds();
+
         sf::Event event;
 
         //Event Poll
@@ -71,9 +93,9 @@ int main()
             if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
                 magnet.change_state();
 
-            //Spawn Click
+            //Spawn Click //ONLY FOR DEBBUGING WATCH OUT AT BUILD
             if (sf::Mouse::isButtonPressed(sf::Mouse::Right))
-                coins.push_back(Coin(mousePosWindow.x, mousePosWindow.y, 1, 1));
+                coins.push_back(Coin(1, 1, 1.f));
         }
 
         //Change Window Background
@@ -82,21 +104,58 @@ int main()
         //Store Mouse Position
         mousePosWindow = sf::Mouse::getPosition(window);
 
-        //Coin Updates: Iterate Through All Coins
-        for (auto& e : coins)
+        //Spawn Coins
+        if (CurrentCoinSpawnR >= coinSpawnR)
         {
-            e.update_physics(magnet);
-            e.render(window);
+            coins.push_back(Coin(1, 1, 1.f));
+            CurrentCoinSpawnR = 0.f;
+        }
+        else
+            CurrentCoinSpawnR += deltaTime.asSeconds();
+
+        //Coin Updates: Iterate Through All Coins
+        for (int i = 0; i < coins.size(); i++)
+        {
+            coins[i].update_physics(magnet);
+            coins[i].render(window);
+
+            //Collision with Piggy Bank. 
+            if (coins[i].sprite.getGlobalBounds().intersects(pig.sprite.getGlobalBounds()))
+            {
+                balance = balance + coins[i].value;
+
+                //ERASE THE ITEM LAST TO AVOID ERRORS
+                coins.erase(coins.begin() + i);
+            }
+
+            //Collision with Magnet. 
+            else if (coins[i].sprite.getGlobalBounds().intersects(magnet.magnetsprite.getGlobalBounds()))
+            {
+                balance = balance - coins[i].value;
+
+                //ERASE THE ITEM LAST TO AVOID ERRORS
+                coins.erase(coins.begin() + i);
+            }
         }
 
         //Magnet Updates:
         magnet.render(window);
         magnet.changePos(dirRight, dirLeft, dirDown, dirUp);
-#
+
+        //Pig Updates:
+        pig.render(window);
+        pig.changePos(window, deltaTime);
+
+        //Text Updates:
+        Balance.update("euro", false, balance);
+        Balance.render(window, 340.f, 700.f);
+        Balance.update("seconds", false, currentRoundTime);
+        Balance.render(window, 320.f, 750.f);
+
         //Magnet Movement Restrictions:
         if (magnet.get_pos().x <= 0.f)
             dirLeft = 0.f;
-        if (magnet.get_pos().x >= window_width) //TO DO - FOR SPRITE LENGHT
+        if (magnet.get_pos().x >= window_width)//TO DO - FOR SPRITE LENGHT
             dirRight = 0.f;
         if (magnet.get_pos().y <= 0.f)
             dirUp = 0.f;

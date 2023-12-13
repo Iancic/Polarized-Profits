@@ -137,8 +137,11 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Hand.h" />
     <ClInclude Include="Magnet.h" />
     <ClInclude Include="Coin.h" />
+    <ClInclude Include="Pig.h" />
+    <ClInclude Include="TextUI.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

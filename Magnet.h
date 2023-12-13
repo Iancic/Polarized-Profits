@@ -10,7 +10,7 @@ public:
 	float movespeed = 6.f;
 	float strenght;
 
-	//True Means + Polarity & False Mean - Polarity
+	//True Means + Polarity (Attraction) & False Mean - Polarity
 	bool state = true; 
 
 	sf::Texture* magnettexture;
@@ -39,7 +39,7 @@ public:
 	void initSprite()
 	{
 		magnetsprite.setTexture(*magnettexture);
-		magnetsprite.setScale(0.5f, 0.5f);
+		magnetsprite.setScale(0.4f, 0.4f);
 		magnetsprite.setOrigin(magnetsprite.getTexture()->getSize().x / 2, magnetsprite.getTexture()->getSize().y * 0.5f / 2);
 	}
 
