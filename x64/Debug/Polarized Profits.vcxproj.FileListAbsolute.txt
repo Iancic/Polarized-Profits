@@ -1,2 +1,1 @@
-D:\Game Development\Projects\C++\Polarized Profits\x64\Debug\Polarized Profits.exe
 D:\Game Development\Projects\Polarized-Profits\x64\Debug\Polarized Profits.exe

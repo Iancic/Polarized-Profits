@@ -8,40 +8,24 @@ class Hand
 public:
 
 	sf::Vector2f pos;
+	bool hand_type; //if true type is right, if false type is left
 
 	sf::Texture* handtexture;
-	sf::Sprite sprite;
+	sf::Sprite sprite_hand;
+	sf::Texture* handtexture_failure;
+	sf::Sprite sprite_failure;
+	sf::Texture* handtexture_succes;
+	sf::Sprite sprite_succes;
 
 	//Constructor
-	Hand(float pos_x, float pos_y)
-	{
-		initTexture();
-		initSprite();
-
-		pos.x = pos_x;
-		pos.y = pos_y;
-	}
+	Hand(bool type); //if true type is right, if false type is left
 
 	//Initial Texture Settings
-	void initTexture()
-	{
-		handtexture = new sf::Texture;
-		handtexture->loadFromFile("");
-	}
+	void initTexture();
 
 	//Initial Sprite Settings
-	void initSprite()
-	{
-		sprite.setTexture(*handtexture);
-		sprite.setScale(0.3f, 0.3f);
-		sprite.setOrigin(sprite.getTexture()->getSize().x / 2, sprite.getTexture()->getSize().y * 0.5f / 2);
-	}
+	void initSprite();
 
 	//Render Hand
-	void render(sf::RenderWindow& window)
-	{
-		window.draw(sprite);
-		sprite.setPosition(pos);
-	}
-
+	void render(sf::RenderWindow& window);
 };

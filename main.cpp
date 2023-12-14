@@ -8,6 +8,7 @@
 #include "Pig.h"
 #include "Hand.h"
 #include "TextUI.h"
+#include "CoreScene.h"
 //Classes
 
 int main()
@@ -19,9 +20,9 @@ int main()
 
     //Delta Time Clock
     sf::Clock clock;
-    float maxRoundTime = 120.f;
+    float maxRoundTime = 90.f;
     float currentRoundTime = maxRoundTime;
-    float coinSpawnR = 2.5f;
+    float coinSpawnR = 2.f;
     float CurrentCoinSpawnR = 0.f;
 
     //Frame Rate
@@ -33,15 +34,21 @@ int main()
     //Directions For Magnet Movement
     float dirLeft = 0.f, dirRight = 0.f, dirUp = 0.f, dirDown = 0.f;
 
+    //Scenes
+    CoreScene corescene;
+
     //Mouse Position
     sf::Vector2i mousePosWindow = sf::Mouse::getPosition(window);
 
     //Objects
     std::vector<Coin> coins;
-    Magnet magnet(350, 400, 5000);
+    Magnet magnet(350, 400, 6000);
     Pig pig(500, 500);
-    TextUI Balance(sf::Color::Black, 35);
-    TextUI Timer(sf::Color::Black, 25);
+
+    TextUI Balance(sf::Color::Yellow, 35);
+    TextUI Timer(sf::Color::Yellow, 25);
+
+    Hand righthand(true);
 
     //Main Run Loop
     while (window.isOpen())
@@ -88,6 +95,16 @@ int main()
                 else if (event.key.code == sf::Keyboard::D)
                     dirRight = 0.f;
             }
+
+            //Magnet Movement Restrictions:
+            if (magnet.get_pos().x <= 0.f)
+                dirLeft = 0.f;
+            if (magnet.get_pos().x >= window_width)//TO DO - FOR SPRITE LENGHT
+                dirRight = 0.f;
+            if (magnet.get_pos().y <= 0.f)
+                dirUp = 0.f;
+            if (magnet.get_pos().y >= window_height)//TO DO - FOR SPRITE LENGHT
+                dirDown = 0.f;
 
             //Change Polarity
             if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
@@ -139,28 +156,18 @@ int main()
         }
 
         //Magnet Updates:
-        magnet.render(window);
         magnet.changePos(dirRight, dirLeft, dirDown, dirUp);
+        magnet.render(window);
 
         //Pig Updates:
-        pig.render(window);
         pig.changePos(window, deltaTime);
+        pig.render(window);
 
         //Text Updates:
         Balance.update("euro", false, balance);
         Balance.render(window, 340.f, 700.f);
         Balance.update("seconds", false, currentRoundTime);
         Balance.render(window, 320.f, 750.f);
-
-        //Magnet Movement Restrictions:
-        if (magnet.get_pos().x <= 0.f)
-            dirLeft = 0.f;
-        if (magnet.get_pos().x >= window_width)//TO DO - FOR SPRITE LENGHT
-            dirRight = 0.f;
-        if (magnet.get_pos().y <= 0.f)
-            dirUp = 0.f;
-        if (magnet.get_pos().y >= window_height)//TO DO - FOR SPRITE LENGHT
-            dirDown = 0.f;
 
         //Draw Screen
         window.display();
