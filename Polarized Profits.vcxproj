@@ -139,7 +139,6 @@
     <ClCompile Include="Magnet.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Pig.cpp" />
-    <ClCompile Include="Scene.cpp" />
     <ClCompile Include="TextUI.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -147,7 +146,6 @@
     <ClInclude Include="Magnet.h" />
     <ClInclude Include="Coin.h" />
     <ClInclude Include="Pig.h" />
-    <ClInclude Include="Scene.h" />
     <ClInclude Include="TextUI.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

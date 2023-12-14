@@ -8,7 +8,6 @@
 #include "Pig.h"
 #include "Hand.h"
 #include "TextUI.h"
-#include "CoreScene.h"
 //Classes
 
 int main()
@@ -20,6 +19,7 @@ int main()
 
     //Delta Time Clock
     sf::Clock clock;
+    sf::Time deltaTime;
     float maxRoundTime = 90.f;
     float currentRoundTime = maxRoundTime;
     float coinSpawnR = 2.f;
@@ -30,12 +30,10 @@ int main()
 
     //Game Logic
     float balance = 0.f;
+    int gameState = 1; // 1 (Main Menu), 2 (Level 1), 3 (Level 2)
 
     //Directions For Magnet Movement
     float dirLeft = 0.f, dirRight = 0.f, dirUp = 0.f, dirDown = 0.f;
-
-    //Scenes
-    CoreScene corescene;
 
     //Mouse Position
     sf::Vector2i mousePosWindow = sf::Mouse::getPosition(window);
@@ -48,13 +46,14 @@ int main()
     TextUI Balance(sf::Color::Yellow, 35);
     TextUI Timer(sf::Color::Yellow, 25);
 
-    Hand righthand(true);
-
     //Main Run Loop
     while (window.isOpen())
     {
+        //Store Mouse Position
+        mousePosWindow = sf::Mouse::getPosition(window);
+
         //Delta Time
-        sf::Time deltaTime = clock.restart();
+        deltaTime = clock.restart();
 
         //Window Timer. -1 Second 
         currentRoundTime -= deltaTime.asSeconds();
@@ -115,11 +114,24 @@ int main()
                 coins.push_back(Coin(1, 1, 1.f));
         }
 
+        switch (gameState) {
+            case 1:
+                void Level1();
+                break;
+            case 2:
+                break;
+            default:
+                break;
+        }
+
+        //Draw Screen
+        window.display();
+    }
+
+    void Level1();
+    {
         //Change Window Background
         window.clear(magnet.return_state_color());
-
-        //Store Mouse Position
-        mousePosWindow = sf::Mouse::getPosition(window);
 
         //Spawn Coins
         if (CurrentCoinSpawnR >= coinSpawnR)
@@ -168,9 +180,6 @@ int main()
         Balance.render(window, 340.f, 700.f);
         Balance.update("seconds", false, currentRoundTime);
         Balance.render(window, 320.f, 750.f);
-
-        //Draw Screen
-        window.display();
     }
 
     return 0;
