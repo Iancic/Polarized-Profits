@@ -1,4 +1,4 @@
 ﻿  main.cpp
-D:\Game Development\Projects\Polarized-Profits\main.cpp(181,39): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-D:\Game Development\Projects\Polarized-Profits\main.cpp(183,42): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+D:\Game Development\Projects\Polarized-Profits\main.cpp(61,35): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+D:\Game Development\Projects\Polarized-Profits\main.cpp(63,36): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
   Polarized Profits.vcxproj -> D:\Game Development\Projects\Polarized-Profits\x64\Debug\Polarized Profits.exe

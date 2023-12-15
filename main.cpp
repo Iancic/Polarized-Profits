@@ -1,18 +1,69 @@
 #include <iostream>
 #include <vector>
 #include <SFML/Graphics.hpp>
-//Libraries
 
 #include "Magnet.h"
 #include "Coin.h"
 #include "Pig.h"
 #include "Hand.h"
 #include "TextUI.h"
-//Classes
+
+void Level1(sf::RenderWindow& window, TextUI& Balance, TextUI& Timer, Magnet& magnet, std::vector<Coin>& coins, Pig& pig, float balance, float dirLeft, float dirUp, float dirDown, float dirRight, float CurrentCoinSpawnR, float coinSpawnR, float currentRoundTime, sf::Time deltaTime)
+{
+    //Change Window Background
+    window.clear(magnet.return_state_color());
+
+    //Spawn Coins
+    if (CurrentCoinSpawnR >= coinSpawnR)
+    {
+        coins.push_back(Coin(1, 1, 1.f));
+        CurrentCoinSpawnR = 0.f;
+    }
+    else
+        CurrentCoinSpawnR += deltaTime.asSeconds();
+
+    //Coin Updates: Iterate Through All Coins
+    for (int i = 0; i < coins.size(); i++)
+    {
+        coins[i].update_physics(magnet);
+        coins[i].render(window);
+
+        //Collision with Piggy Bank. 
+        if (coins[i].sprite.getGlobalBounds().intersects(pig.sprite.getGlobalBounds()))
+        {
+            balance = balance + coins[i].value;
+
+            //ERASE THE ITEM LAST TO AVOID ERRORS
+            coins.erase(coins.begin() + i);
+        }
+
+        //Collision with Magnet. 
+        else if (coins[i].sprite.getGlobalBounds().intersects(magnet.magnetsprite.getGlobalBounds()))
+        {
+            balance = balance - coins[i].value;
+
+            //ERASE THE ITEM LAST TO AVOID ERRORS
+            coins.erase(coins.begin() + i);
+        }
+    }
+
+    //Magnet Updates:
+    magnet.changePos(dirRight, dirLeft, dirDown, dirUp);
+    magnet.render(window);
+
+    //Pig Updates:
+    pig.changePos(window, deltaTime);
+    pig.render(window);
+
+    //Text Updates:
+    Balance.update("euro", false, balance);
+    Balance.render(window, 340.f, 700.f);
+    Timer.update("seconds", false, currentRoundTime);
+    Timer.render(window, 340.f, 750.f);
+}
 
 int main()
 {
-    //Screen Setup
     int window_height = 800;
     int window_width = 800;
     sf::RenderWindow window(sf::VideoMode(window_height, window_width), "Polarized Profits");
@@ -25,7 +76,6 @@ int main()
     float coinSpawnR = 2.f;
     float CurrentCoinSpawnR = 0.f;
 
-    //Frame Rate
     window.setFramerateLimit(60);
 
     //Game Logic
@@ -35,7 +85,6 @@ int main()
     //Directions For Magnet Movement
     float dirLeft = 0.f, dirRight = 0.f, dirUp = 0.f, dirDown = 0.f;
 
-    //Mouse Position
     sf::Vector2i mousePosWindow = sf::Mouse::getPosition(window);
 
     //Objects
@@ -44,7 +93,7 @@ int main()
     Pig pig(500, 500);
 
     TextUI Balance(sf::Color::Yellow, 35);
-    TextUI Timer(sf::Color::Yellow, 25);
+    TextUI Timer(sf::Color::Yellow, 20);
 
     //Main Run Loop
     while (window.isOpen())
@@ -116,7 +165,7 @@ int main()
 
         switch (gameState) {
             case 1:
-                void Level1();
+                Level1(window, Balance, Timer, magnet, coins, pig, balance, dirLeft, dirUp, dirDown, dirRight, CurrentCoinSpawnR, coinSpawnR, currentRoundTime, deltaTime);
                 break;
             case 2:
                 break;
@@ -124,62 +173,7 @@ int main()
                 break;
         }
 
-        //Draw Screen
         window.display();
-    }
-
-    void Level1();
-    {
-        //Change Window Background
-        window.clear(magnet.return_state_color());
-
-        //Spawn Coins
-        if (CurrentCoinSpawnR >= coinSpawnR)
-        {
-            coins.push_back(Coin(1, 1, 1.f));
-            CurrentCoinSpawnR = 0.f;
-        }
-        else
-            CurrentCoinSpawnR += deltaTime.asSeconds();
-
-        //Coin Updates: Iterate Through All Coins
-        for (int i = 0; i < coins.size(); i++)
-        {
-            coins[i].update_physics(magnet);
-            coins[i].render(window);
-
-            //Collision with Piggy Bank. 
-            if (coins[i].sprite.getGlobalBounds().intersects(pig.sprite.getGlobalBounds()))
-            {
-                balance = balance + coins[i].value;
-
-                //ERASE THE ITEM LAST TO AVOID ERRORS
-                coins.erase(coins.begin() + i);
-            }
-
-            //Collision with Magnet. 
-            else if (coins[i].sprite.getGlobalBounds().intersects(magnet.magnetsprite.getGlobalBounds()))
-            {
-                balance = balance - coins[i].value;
-
-                //ERASE THE ITEM LAST TO AVOID ERRORS
-                coins.erase(coins.begin() + i);
-            }
-        }
-
-        //Magnet Updates:
-        magnet.changePos(dirRight, dirLeft, dirDown, dirUp);
-        magnet.render(window);
-
-        //Pig Updates:
-        pig.changePos(window, deltaTime);
-        pig.render(window);
-
-        //Text Updates:
-        Balance.update("euro", false, balance);
-        Balance.render(window, 340.f, 700.f);
-        Balance.update("seconds", false, currentRoundTime);
-        Balance.render(window, 320.f, 750.f);
     }
 
     return 0;
