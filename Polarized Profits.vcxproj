@@ -134,6 +134,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Button.cpp" />
     <ClCompile Include="Coin.cpp" />
     <ClCompile Include="Hand.cpp" />
     <ClCompile Include="Magnet.cpp" />
@@ -142,6 +143,7 @@
     <ClCompile Include="TextUI.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Button.h" />
     <ClInclude Include="Hand.h" />
     <ClInclude Include="Magnet.h" />
     <ClInclude Include="Coin.h" />
