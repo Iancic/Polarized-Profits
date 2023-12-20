@@ -1,6 +1,5 @@
 #include "Coin.h"
 
-//Constructor
 Coin::Coin(float vel_x, float vel_y, float coinValue)
 {
 	initTexture();
@@ -17,26 +16,23 @@ Coin::Coin(float vel_x, float vel_y, float coinValue)
 	this->value = coinValue;
 }
 
-//Initial Texture Settings
 void Coin::initTexture()
 {
 	cointexture = new sf::Texture;
 	cointexture->loadFromFile("Assets/Sprites/Coin_V2.png");
 }
 
-//Initial Sprite Settings
 void Coin::initSprite()
 {
 	sprite.setTexture(*cointexture);
 	sprite.setScale(0.17f, 0.17f);
-	sprite.setOrigin(sprite.getTexture()->getSize().x / 2, sprite.getTexture()->getSize().y * 0.5f / 2);
+	sprite.setOrigin(sprite.getTexture()->getSize().x / 2, sprite.getTexture()->getSize().y / 2);
 }
 
-//Render Coin
 void Coin::render(sf::RenderWindow& window)
 {
-	window.draw(sprite);
 	sprite.setPosition(pos);
+	window.draw(sprite);
 }
 
 //Movement Interaction With The Magnet
@@ -49,7 +45,7 @@ void Coin::update_physics(Magnet& s)
 	//Distance Formula(Pythagoras).
 	float distance = sqrt(distance_x * distance_x + distance_y * distance_y);
 
-	if (distance < 350.f)
+	if (distance < 300.f)
 	{
 
 		//Make A Vector Out Of Distance With Normalization
@@ -76,7 +72,6 @@ void Coin::update_physics(Magnet& s)
 		{
 			pos.y -= vel.y;
 			vel.x = 0;
-			// Reset Wave Motion On X From Attraction
 			vel.y = 0;
 		}
 	}

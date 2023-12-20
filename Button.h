@@ -1,5 +1,6 @@
 #pragma once
 #include <SFML/Graphics.hpp>
+
 #include "TextUI.h"
 
 class Button
@@ -12,8 +13,9 @@ public:
 	sf::Font roboto;
 	sf::RectangleShape buttonBox;
 
-	//constructor
 	Button(float sizeX, float sizeY, sf::Color boxcolor, sf::Color textcolor, int textsize);
+
 	void update(std::string phrase);
+
 	void render(sf::RenderWindow& window, float posX, float posY);
 };

@@ -38,10 +38,10 @@ Code Docs:
 
 First Level:
 Hand Algorithm:
-1. Spawn a right hand and a left hand (Initialization, Update, Render, Spawner).
-2. Move the hand a random distance on x when spawned. (Move Function that counts to how many second the hand should move before it stops. When counter reaches 0, change the sprite to closed fist then change movement direction, kill the hand after certain amount (retraction function) ).
+1. Spawn a right hand and a left hand (Initialization, Update, Render, Spawner). DONE 20.12.2023
+2. Move the hand. (Move Function that counts to how many second the hand should move before it stops. When counter reaches 0, change the sprite to closed fist then change movement direction, kill the hand after certain amount (retraction function) ). 
 3. Collision with coins. (Destroy the coin, change the hand sprite and activate retraction function).
-4. Play with difficulty of the hand. Debug and change polarity with spacebar.
+4. Play with difficulty of the hand.
 
 Second Level:
 1. Make Begging Hand Class (Initialization, Update, Render, Spawner).

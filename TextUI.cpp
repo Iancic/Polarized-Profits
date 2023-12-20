@@ -1,6 +1,5 @@
 #include "TextUI.h"
 
-//Constructor
 TextUI::TextUI(sf::Color textcolor, int size)
 {
 	roboto.loadFromFile("Assets/Fonts/Preahvihear-Regular.ttf");

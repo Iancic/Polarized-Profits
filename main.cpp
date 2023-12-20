@@ -31,14 +31,17 @@ void MainMenu(sf::RenderWindow& window, TextUI& GameTitle1, TextUI& GameTitle2, 
     Exit.render(window, 200.f, 420.f);
 }
 
-void Level1(sf::RenderWindow& window, TextUI& Balance, TextUI& Timer, Magnet& magnet, std::vector<Coin>& coins, Pig& pig, float& balance, float dirLeft, float dirUp, float dirDown, float dirRight, float& CurrentCoinSpawnR, float& coinSpawnR, float currentRoundTime, sf::Time deltaTime)
+void Level1(sf::RenderWindow& window, int gameState, TextUI& Balance, TextUI& Timer, Magnet& magnet, Hand& leftHand, Hand& rightHand, std::vector<Coin>& coins, Pig& pig, float& balance, float dirLeft, float dirUp, float dirDown, float dirRight, float& CurrentCoinSpawnR, float& coinSpawnR, float currentRoundTime, sf::Time deltaTime)
 {
     window.clear(magnet.return_state_color());
+
+    //Coin SpawnRate
+    CurrentCoinSpawnR += deltaTime.asSeconds();
 
     //Spawn Coins
     if (CurrentCoinSpawnR >= coinSpawnR)
     {
-        coins.push_back(Coin(1, 1, 1.f));
+        coins.push_back(Coin(0.8f, 0.8f, 3.f));
         CurrentCoinSpawnR = 0.f;
     }
 
@@ -52,30 +55,54 @@ void Level1(sf::RenderWindow& window, TextUI& Balance, TextUI& Timer, Magnet& ma
         if (coins[i].sprite.getGlobalBounds().intersects(pig.sprite.getGlobalBounds()))
         {
             balance = balance + coins[i].value;
-
-            //ERASE THE ITEM LAST TO AVOID ERRORS
             coins.erase(coins.begin() + i);
         }
 
         //Collision with Magnet. 
         else if (coins[i].sprite.getGlobalBounds().intersects(magnet.magnetsprite.getGlobalBounds()))
         {
-            balance = balance - 5 * coins[i].value;
-
-            //ERASE THE ITEM LAST TO AVOID ERRORS
+            balance = balance - 2 * coins[i].value;
             coins.erase(coins.begin() + i);
         }
+
+        //Collision with Hand. 
+        else if (coins[i].sprite.getGlobalBounds().intersects(leftHand.sprite_hand.getGlobalBounds()))
+        {
+            //Pushes the hand back after getting the coin
+            leftHand.pos.x = -150.f;
+            balance = balance - 1;
+
+            coins.erase(coins.begin() + i);
+        }
+
+        else if (coins[i].sprite.getGlobalBounds().intersects(rightHand.sprite_hand.getGlobalBounds()))
+        {
+            //Pushes the hand back after getting the coin
+            rightHand.pos.x = 950.f;
+            balance = balance - 1;
+
+            coins.erase(coins.begin() + i);
+        }
+
+        //Erase coin if not on screen
+        if (coins[i].pos.y > 900.f)
+            coins.erase(coins.begin() + i);
     }
 
-    //Magnet Updates:
+    //Objects Updates:
     magnet.changePos(dirRight, dirLeft, dirDown, dirUp);
     magnet.render(window);
 
-    //Pig Updates:
     pig.changePos(window, deltaTime);
     pig.render(window);
 
-    //Text Updates:
+    leftHand.moveHand(coins);
+    leftHand.render(window);
+
+    rightHand.moveHand(coins);
+    rightHand.render(window);
+
+    //UI Updates:
     Balance.update("euro", false, balance);
     Balance.render(window, 340.f, 700.f);
     Timer.update("seconds", false, currentRoundTime);
@@ -94,23 +121,29 @@ void Outro()
 
 int main()
 {
+    //Window Settings
     int window_height = 800;
     int window_width = 800;
-    sf::RenderWindow window(sf::VideoMode(window_height, window_width), "Polarized Profits", sf::Style::Titlebar | sf::Style::Close);
 
-    //Delta Time Clock
-    sf::Clock clock;
-    sf::Time deltaTime;
-    float maxRoundTime = 90.f;
-    float currentRoundTime = maxRoundTime;
-    float coinSpawnR = 1.f;
-    float CurrentCoinSpawnR = 0.f;
+    sf::RenderWindow window(sf::VideoMode(window_height, window_width), "Polarized Profits");
 
     window.setFramerateLimit(60);
     window.setVerticalSyncEnabled(false);
 
+    //Delta Time Clock
+    sf::Clock clock;
+    sf::Time deltaTime;
+
+    float maxRoundTime = 61.f; //Level 1 Round Time
+    float currentRoundTime = maxRoundTime;
+
+    float coinSpawnR = 1.f; //Spawnrate For Coins
+    float CurrentCoinSpawnR = 0.f;
+
     //Game Logic
-    float balance = 0.f;
+    float polarityPressed = false; //Check for Polarity Input
+
+    float balance = 0.f; //Balance
     int gameState = 1; // 1 (Main Menu), 2 (Level 1), 3 (Level 2), 4 (Outro)
 
     //Directions For Magnet Movement
@@ -128,26 +161,29 @@ int main()
     Button Exit(300.f, 100.f, sf::Color::Red, sf::Color::Black, 35);
 
     //Level1
-    std::vector<Coin> coins;
-    Magnet magnet(350, 400, 6000);
-    Pig pig(500, 500);
     TextUI Balance(sf::Color::Yellow, 35);
     TextUI Timer(sf::Color::Yellow, 20);
+
+    std::vector<Coin> coins;
+    Magnet magnet(400, 600, 5000);
+    Pig pig(400, 400);
+    Hand leftHand(false);
+    Hand rightHand(true);
 
     while (window.isOpen())
     {
         mousePosWindow = sf::Mouse::getPosition(window);
 
+        //Level 1 Timer
+        if (gameState == 2)
+        {
+        currentRoundTime -= deltaTime.asSeconds();
+        if (currentRoundTime <= 0)
+            gameState++;
+        }
+
         //Delta Time
         deltaTime = clock.restart();
-
-        //Window Timer. -1 Second 
-        currentRoundTime -= deltaTime.asSeconds();
-        if (currentRoundTime == 0)
-            gameState++;
-
-        //Coin SpawnRate
-        CurrentCoinSpawnR += deltaTime.asSeconds();
 
         sf::Event event;
 
@@ -155,6 +191,13 @@ int main()
         {
             if (event.type == sf::Event::Closed)
                 window.close();
+
+            //Change Magnet Polarity
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space) && polarityPressed == false && gameState == 2)
+            {
+                magnet.change_state();
+                polarityPressed = true;
+            }
 
             //Magnet Movement
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
@@ -172,6 +215,9 @@ int main()
             //Magnet Movement, Button Released, reset Values
             if (event.type == sf::Event::KeyReleased)
             {
+                if (event.key.code == sf::Keyboard::Space)
+                    polarityPressed = false;
+
                 if (event.key.code == sf::Keyboard::W)
                     dirUp = 0.f;
 
@@ -187,16 +233,14 @@ int main()
 
             if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
             {
-                //Main Menu Buttons Functionality
+                //UI Buttons Functionality
                 if (gameState == 1)
                 {
                     if (Start.buttonBox.getGlobalBounds().contains(window.mapPixelToCoords(mousePosWindow)))
                         gameState ++;
+                    if (Exit.buttonBox.getGlobalBounds().contains(window.mapPixelToCoords(mousePosWindow)))
+                        window.close();
                 }
-
-                //Change Polarity
-                if (gameState == 2)
-                magnet.change_state();
             }
         }
 
@@ -219,12 +263,14 @@ int main()
                 MainMenu(window, GameTitle1, GameTitle2, Author, Start, Exit, NULL);
                 break;
             case 2:
-                Level1(window, Balance, Timer, magnet, coins, pig, balance, dirLeft, dirUp, dirDown, dirRight, CurrentCoinSpawnR, coinSpawnR, currentRoundTime, deltaTime);
+                Level1(window, gameState, Balance, Timer, magnet, leftHand, rightHand, coins, pig, balance, dirLeft, dirUp, dirDown, dirRight, CurrentCoinSpawnR, coinSpawnR, currentRoundTime, deltaTime);
                 break;
             case 3:
                 Level2();
+                break;
             case 4:
                 Outro();
+                break;
             default:
                 break;
         }

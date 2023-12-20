@@ -1,6 +1,5 @@
 #include "Pig.h"
 
-//Constructor
 Pig::Pig(float pos_x, float pos_y)
 {
 	pos.x = pos_x;
@@ -10,14 +9,12 @@ Pig::Pig(float pos_x, float pos_y)
 	initSprite();
 }
 
-//Initial Texture Settings
 void Pig::initTexture()
 {
 	pigtexture = new sf::Texture;
 	pigtexture->loadFromFile("Assets/Sprites/Pig.png");
 }
 
-//Initial Sprite Settings
 void Pig::initSprite()
 {
 	sprite.setTexture(*pigtexture);
@@ -25,7 +22,6 @@ void Pig::initSprite()
 	sprite.setOrigin(sprite.getTexture()->getSize().x / 2, sprite.getTexture()->getSize().y * 0.5f / 2);
 }
 
-//Changes The Pig position Based On Timer
 void Pig::changePos(sf::RenderWindow& window, sf::Time counter)
 {
 	if (timer >= maxTime)
@@ -56,7 +52,6 @@ void Pig::changePos(sf::RenderWindow& window, sf::Time counter)
 	}
 }
 
-//Render Pig
 void Pig::render(sf::RenderWindow& window)
 {
 	window.draw(sprite);

@@ -1,4 +1,8 @@
 ﻿  main.cpp
-D:\Game Development\Projects\Polarized-Profits\main.cpp(82,35): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-D:\Game Development\Projects\Polarized-Profits\main.cpp(84,36): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+D:\Game Development\Projects\Polarized-Profits\Hand.h(18,14): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+D:\Game Development\Projects\Polarized-Profits\Hand.h(19,16): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+D:\Game Development\Projects\Polarized-Profits\Hand.h(21,18): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+D:\Game Development\Projects\Polarized-Profits\main.cpp(106,35): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+D:\Game Development\Projects\Polarized-Profits\main.cpp(108,36): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+D:\Game Development\Projects\Polarized-Profits\main.cpp(196,68): warning C4805: '==': unsafe mix of type 'float' and type 'bool' in operation
   Polarized Profits.vcxproj -> D:\Game Development\Projects\Polarized-Profits\x64\Debug\Polarized Profits.exe

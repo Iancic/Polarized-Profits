@@ -12,7 +12,6 @@ public:
 
 	std::string concat;
 
-	//Constructor
 	TextUI(sf::Color textcolor, int size);
 
 	void update(std::string phrase, bool simple, int value);

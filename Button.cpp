@@ -1,6 +1,5 @@
 #include "Button.h"
 
-//Constructor
 Button::Button(float sizeX, float sizeY, sf::Color boxcolor, sf::Color textcolor, int textsize)
 {
 
