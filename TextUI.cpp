@@ -2,7 +2,7 @@
 
 TextUI::TextUI(sf::Color textcolor, int size)
 {
-	roboto.loadFromFile("Assets/Fonts/Preahvihear-Regular.ttf");
+	roboto.loadFromFile("Assets/Fonts/NTR-Regular.ttf");
 	text.setFont(roboto);
 	text.setFillColor(textcolor);
 	text.setCharacterSize(size);

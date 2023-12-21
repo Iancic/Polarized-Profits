@@ -9,7 +9,7 @@ Button::Button(float sizeX, float sizeY, sf::Color boxcolor, sf::Color textcolor
 	buttonBox.setFillColor(boxcolor);
 
 	//Text
-	roboto.loadFromFile("Assets/Fonts/Preahvihear-Regular.ttf");
+	roboto.loadFromFile("Assets/Fonts/NTR-Regular.ttf");
 	text.setFont(roboto);
 	text.setFillColor(textcolor);
 	text.setCharacterSize(textsize);
