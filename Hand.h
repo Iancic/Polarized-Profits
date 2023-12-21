@@ -27,12 +27,12 @@ public:
 
 	int timer = 0.1f;
 	int maxTime = 60.f; //Lifetime of hand
-	int moveSpeed = 1.f;
+	int moveSpeed = 1.5f;
 	int randomCoinPos;
 
 	float distance_x, distance_y;
 
-	Hand(bool type); //if true type is right, if false type is left
+	Hand(bool type, int windowHeight, int windowWidth);
 
 	void initTexture();
 

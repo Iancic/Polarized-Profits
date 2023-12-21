@@ -1,8 +1,61 @@
-﻿  main.cpp
-D:\Game Development\Projects\Polarized-Profits\Hand.h(18,14): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
-D:\Game Development\Projects\Polarized-Profits\Hand.h(19,16): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
-D:\Game Development\Projects\Polarized-Profits\Hand.h(21,18): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+﻿  Coin.cpp
+D:\Game Development\Projects\Polarized-Profits\Coin.cpp(35,90): warning C4244: 'argument': conversion from 'T' to 'float', possible loss of data
+          with
+          [
+              T=unsigned int
+          ]
+D:\Game Development\Projects\Polarized-Profits\Coin.cpp(35,52): warning C4244: 'argument': conversion from 'T' to 'float', possible loss of data
+          with
+          [
+              T=unsigned int
+          ]
+  Hand.cpp
+D:\Game Development\Projects\Polarized-Profits\Hand.h(28,14): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+D:\Game Development\Projects\Polarized-Profits\Hand.h(29,16): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+D:\Game Development\Projects\Polarized-Profits\Hand.h(30,18): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+D:\Game Development\Projects\Polarized-Profits\Hand.cpp(9,24): warning C4244: '=': conversion from 'int' to 'T', possible loss of data
+          with
+          [
+              T=float
+          ]
+D:\Game Development\Projects\Polarized-Profits\Hand.cpp(14,24): warning C4244: '=': conversion from 'int' to 'T', possible loss of data
+          with
+          [
+              T=float
+          ]
+D:\Game Development\Projects\Polarized-Profits\Hand.cpp(37,68): warning C4244: 'argument': conversion from 'T' to 'float', possible loss of data
+          with
+          [
+              T=unsigned int
+          ]
+D:\Game Development\Projects\Polarized-Profits\Hand.cpp(39,102): warning C4244: 'argument': conversion from 'T' to 'float', possible loss of data
+          with
+          [
+              T=unsigned int
+          ]
+D:\Game Development\Projects\Polarized-Profits\Hand.cpp(39,60): warning C4244: 'argument': conversion from 'T' to 'float', possible loss of data
+          with
+          [
+              T=unsigned int
+          ]
+  Magnet.cpp
+D:\Game Development\Projects\Polarized-Profits\Magnet.cpp(22,108): warning C4244: 'argument': conversion from 'T' to 'float', possible loss of data
+          with
+          [
+              T=unsigned int
+          ]
+D:\Game Development\Projects\Polarized-Profits\Magnet.cpp(22,64): warning C4244: 'argument': conversion from 'T' to 'float', possible loss of data
+          with
+          [
+              T=unsigned int
+          ]
+  main.cpp
+D:\Game Development\Projects\Polarized-Profits\Hand.h(28,14): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+D:\Game Development\Projects\Polarized-Profits\Hand.h(29,16): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+D:\Game Development\Projects\Polarized-Profits\Hand.h(30,18): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
 D:\Game Development\Projects\Polarized-Profits\main.cpp(106,35): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
 D:\Game Development\Projects\Polarized-Profits\main.cpp(108,36): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-D:\Game Development\Projects\Polarized-Profits\main.cpp(196,68): warning C4805: '==': unsafe mix of type 'float' and type 'bool' in operation
+D:\Game Development\Projects\Polarized-Profits\main.cpp(195,68): warning C4805: '==': unsafe mix of type 'float' and type 'bool' in operation
+  Generating Code...
+D:\Game Development\Projects\Polarized-Profits\Magnet.cpp(77): warning C4715: 'Magnet::return_state_color': not all control paths return a value
   Polarized Profits.vcxproj -> D:\Game Development\Projects\Polarized-Profits\x64\Debug\Polarized Profits.exe

@@ -1,17 +1,17 @@
 #include "Hand.h"
 
-Hand::Hand(bool type) //if true type is right, if false type is left
+Hand::Hand(bool type, int windowHeight, int windowWidth)
 {
 	hand_type = type;
 
 	if (hand_type)
 	{
-		pos.y = 200.f;
-		pos.x = 1000.f;
+		pos.y = windowHeight / 2;
+		pos.x = windowWidth + 200.f;
 	}
 	else
 	{
-		pos.y = 500.f;
+		pos.y = windowHeight / 2;
 		pos.x = -200.f;
 	}
 

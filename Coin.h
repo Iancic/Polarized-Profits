@@ -15,10 +15,11 @@ public:
 	sf::Texture* cointexture;
 	sf::Sprite sprite;
 
-	float fallSpeed = 0.02f;
+	float scale = 0.14f;
+	float fallSpeed = 0.005f;
 	float value;
 
-	Coin(float vel_x, float vel_y, float coinValue);
+	Coin(float vel_x, float vel_y, float coinValue, int windowWidth, int windowHeight);
 
 	void initTexture();
 
