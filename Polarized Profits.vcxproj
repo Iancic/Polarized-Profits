@@ -134,6 +134,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Background.cpp" />
     <ClCompile Include="Button.cpp" />
     <ClCompile Include="Coin.cpp" />
     <ClCompile Include="Hand.cpp" />
@@ -141,14 +142,17 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Pig.cpp" />
     <ClCompile Include="TextUI.cpp" />
+    <ClCompile Include="Transition.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Background.h" />
     <ClInclude Include="Button.h" />
     <ClInclude Include="Hand.h" />
     <ClInclude Include="Magnet.h" />
     <ClInclude Include="Coin.h" />
     <ClInclude Include="Pig.h" />
     <ClInclude Include="TextUI.h" />
+    <ClInclude Include="Transition.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

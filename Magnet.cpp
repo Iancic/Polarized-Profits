@@ -11,13 +11,16 @@ Magnet::Magnet(float pos_x, float pos_y)
 
 void Magnet::initTexture()
 {
-	magnettexture = new sf::Texture;
-	magnettexture->loadFromFile("Assets/Sprites/Magnet.png");
+	magnettextureBlue = new sf::Texture;
+	magnettextureBlue->loadFromFile("Assets/Sprites/BlueMagnet.png");
+
+	magnettextureRed = new sf::Texture;
+	magnettextureRed->loadFromFile("Assets/Sprites/RedMagnet.png");
 }
 
 void Magnet::initSprite()
 {
-	magnetsprite.setTexture(*magnettexture);
+	magnetsprite.setTexture(*magnettextureRed);
 	magnetsprite.setScale(scale, scale);
 	magnetsprite.setOrigin(magnetsprite.getTexture()->getSize().x / 2, magnetsprite.getTexture()->getSize().y / 2);
 
@@ -30,8 +33,8 @@ void Magnet::initSprite()
 
 void Magnet::render(sf::RenderWindow& window)
 {
-	radiusEffect.setPosition(pos);
-	window.draw(radiusEffect);
+	//radiusEffect.setPosition(pos);
+	//window.draw(radiusEffect);
 
 	magnetsprite.setPosition(pos);
 	window.draw(magnetsprite);
@@ -58,20 +61,18 @@ float Magnet::get_speed()
 void Magnet::change_state()
 {
 	if (state == true)
+	{
 		state = false;
+		magnetsprite.setTexture(*magnettextureBlue);
+	}
 	else if (state == false)
+	{
 		state = true;
+		magnetsprite.setTexture(*magnettextureRed);
+	}
 }
 
 bool Magnet::get_state()
 {
 	return state;
-}
-
-sf::Color Magnet::return_state_color()
-{
-	if (state == true)
-		return sf::Color(232, 42, 42);
-	else if (state == false)
-		return sf::Color(59, 204, 212);
 }

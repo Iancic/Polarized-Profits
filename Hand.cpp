@@ -23,15 +23,21 @@ void Hand::initTexture()
 {
 	handtexture = new sf::Texture;
 	if (hand_type)
-		handtexture->loadFromFile("Assets/Sprites/Right_Hand.png");
+		handtexture->loadFromFile("Assets/Sprites/RightHand.png");
 	else
-		handtexture->loadFromFile("Assets/Sprites/Left_Hand.png");
+		handtexture->loadFromFile("Assets/Sprites/LeftHand.png");
+
+	fisttexture = new sf::Texture;
+	if (hand_type)
+		fisttexture->loadFromFile("Assets/Sprites/RightFist.png");
+	else
+		fisttexture->loadFromFile("Assets/Sprites/LeftFist.png");
 }
 
 void Hand::initSprite()
 {
 	sprite_hand.setTexture(*handtexture);
-	sprite_hand.setScale(1.f, 1.f);
+	sprite_hand.setScale(scale, scale);
 
 	if (hand_type)
 		sprite_hand.setOrigin(0.f, sprite_hand.getTexture()->getSize().y / 2);
@@ -41,6 +47,8 @@ void Hand::initSprite()
 
 void Hand::moveHand(std::vector<Coin>& coins)
 {
+	sprite_hand.setTexture(*handtexture);
+
 	if (coins.empty())
 		return;
 
@@ -58,6 +66,21 @@ void Hand::moveHand(std::vector<Coin>& coins)
 		else if (distance_y < 0.f)
 			pos.y -= moveSpeed;
 	}
+}
+
+void Hand::retractHand()
+{
+	sprite_hand.setTexture(*fisttexture);
+
+	if (hand_type == false)
+		pos.x -= moveSpeed;
+	else if (hand_type == true)
+		pos.x += moveSpeed;
+
+	if (hand_type == false && pos.x < -50.f)
+		retracting = false;
+	if (hand_type == true && pos.x > 1300.f)
+		retracting = false;
 }
 
 void Hand::render(sf::RenderWindow& window)

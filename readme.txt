@@ -75,4 +75,23 @@ f) Font
 g) Menus Rework (With Main Menu Tutorial Image in Photoshop Collage)
 h) Code Transition Class that gets player at every scene beggining and Transition End At Changing Scene
 
+Other Notes:
+make a list with predefined flags and object pooling
+enumerators as game scene manager
+pointers
+case if s
+classes 
+headers
+function and other dictionary
 
+particles don t get deleted just get flagged
+
+visual ray of attraction / denial
+
+INTERVIEW ARE YOU TEACHEABLE, CHALLENGES THAT I OVERCOME WHAT WAS HARD ON THE GAME, 3DGEP COURSE
+
+CHECK FOR LINKS, IMG, VIDEOS, MOCK INTAKE
+
+CMGT - cREATIVE MEDIA AND GAME TECHNOL
+
+BUAS CMGT

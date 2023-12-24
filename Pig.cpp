@@ -18,7 +18,7 @@ void Pig::initTexture()
 void Pig::initSprite()
 {
 	sprite.setTexture(*pigtexture);
-	sprite.setScale(0.07f, 0.07f);
+	sprite.setScale(scale, scale);
 	sprite.setOrigin(sprite.getTexture()->getSize().x / 2, sprite.getTexture()->getSize().y * 0.5f / 2);
 }
 
@@ -29,7 +29,7 @@ void Pig::changePos(sf::RenderWindow& window, sf::Time counter)
 		timer = 0.f;
 
 		//Set The Bounds scale
-		float boundsScale = 0.20f;
+		float boundsScale = 0.1f;
 		float minMargin = 0.f + boundsScale;
 		float maxMargin = 1.f - boundsScale;
 

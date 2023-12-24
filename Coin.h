@@ -1,6 +1,7 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include <vector>
+#include <iostream>
 
 #include "Magnet.h"
 
@@ -12,14 +13,18 @@ public:
 	sf::Vector2f pos;
 	sf::Vector2f vel;
 
-	sf::Texture* cointexture;
+	sf::Texture* coinCopper;
+	sf::Texture* coinSilver;
+	sf::Texture* coinGold;
 	sf::Sprite sprite;
 
-	float scale = 0.14f;
+	float scale = 0.12f;
 	float fallSpeed = 0.005f;
-	float value;
 
-	Coin(float vel_x, float vel_y, float coinValue, int windowWidth, int windowHeight);
+	int value;
+	int coinType;
+
+	Coin(int type, float vel_x, float vel_y, int windowWidth, int windowHeight);
 
 	void initTexture();
 

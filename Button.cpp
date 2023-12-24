@@ -9,10 +9,12 @@ Button::Button(float sizeX, float sizeY, sf::Color boxcolor, sf::Color textcolor
 	buttonBox.setFillColor(boxcolor);
 
 	//Text
-	roboto.loadFromFile("Assets/Fonts/NTR-Regular.ttf");
+	roboto.loadFromFile("Assets/Fonts/DiloWorld-mLJLv.ttf");
 	text.setFont(roboto);
 	text.setFillColor(textcolor);
 	text.setCharacterSize(textsize);
+	text.setOutlineThickness(2.f);
+	text.setOutlineColor(sf::Color::Black);
 }
 
 void Button::update(std::string phrase)
@@ -24,6 +26,6 @@ void Button::render(sf::RenderWindow& window, float posX, float posY)
 {
 	buttonBox.setPosition(posX, posY);
 	window.draw(buttonBox);
-	text.setPosition(posX + posX/2, posY + 20.f);
+	text.setPosition(posX + 100.f, posY + 25.f);
 	window.draw(text);
 }

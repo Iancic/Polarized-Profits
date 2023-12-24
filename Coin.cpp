@@ -1,7 +1,9 @@
 #include "Coin.h"
 
-Coin::Coin(float vel_x, float vel_y, float coinValue, int windowWidth, int windowHeight)
+Coin::Coin(int type, float vel_x, float vel_y, int windowWidth, int windowHeight)
 {
+	coinType = type;
+
 	initTexture();
 	initSprite();
 
@@ -14,23 +16,42 @@ Coin::Coin(float vel_x, float vel_y, float coinValue, int windowWidth, int windo
 	float rangeX = windowWidth * maxMargin;
 
 	pos.x = offsetX + static_cast<float>(rand() % static_cast<int>(rangeX - offsetX));
-	pos.y = -50.f;
+	pos.y = -200.f;
 
 	vel.x = vel_x;
 	vel.y = vel_y;
-
-	value = coinValue;
 }
 
 void Coin::initTexture()
 {
-	cointexture = new sf::Texture;
-	cointexture->loadFromFile("Assets/Sprites/Coin_V2.png");
+	coinCopper = new sf::Texture;
+	coinCopper->loadFromFile("Assets/Sprites/CopperCoin.png");
+
+	coinSilver = new sf::Texture;
+	coinSilver->loadFromFile("Assets/Sprites/SilverCoin.png");
+
+	coinGold = new sf::Texture;
+	coinGold->loadFromFile("Assets/Sprites/GoldCoin.png");
 }
 
 void Coin::initSprite()
 {
-	sprite.setTexture(*cointexture);
+	if (coinType == 1)
+	{
+		sprite.setTexture(*coinCopper);
+		value = 1;
+	}
+	else if (coinType == 2)
+	{
+		sprite.setTexture(*coinSilver);
+		value = 2;
+	}
+	else if (coinType == 3)
+	{
+		sprite.setTexture(*coinGold);
+		value = 3;
+	}
+
 	sprite.setScale(scale, scale);
 	sprite.setOrigin(sprite.getTexture()->getSize().x / 2, sprite.getTexture()->getSize().y / 2);
 }

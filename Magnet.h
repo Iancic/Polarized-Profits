@@ -8,17 +8,18 @@ class Magnet
 public:
 
 
-	sf::Texture* magnettexture;
+	sf::Texture* magnettextureBlue;
+	sf::Texture* magnettextureRed;
 	sf::Sprite magnetsprite;
 	sf::CircleShape radiusEffect;
 
 	sf::Vector2f pos;
 
-	float scale = 0.16f;
-	float movespeed = 6.f;
+	float scale = 0.18f;
+	float movespeed = 4.f;
 	float radius = 200.f;
 
-	bool state = true; //True Means + Polarity (Attraction) & False Mean - Polarity
+	bool state = true; //True Means - Polarity (Attraction) & False Mean + Polarity
 
 	Magnet(float pos_x, float pos_y);
 
@@ -35,8 +36,6 @@ public:
 	float get_speed();
 
 	bool get_state();
-
-	sf::Color return_state_color();
 
 	sf::Vector2f get_pos();
 };
