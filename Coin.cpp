@@ -72,7 +72,7 @@ void Coin::update_physics(Magnet& s)
 	//Pythagoras
 	float distance = sqrt(distance_x * distance_x + distance_y * distance_y);
 
-	if (distance < 250.f)
+	if (distance < 300.f)
 	{
 		//Divide each component (triangle lenght) by the distance inverse (normalization).
 
@@ -87,15 +87,16 @@ void Coin::update_physics(Magnet& s)
 		//+velocity when in attraction polarity
 		if (s.get_state() == true)
 		{
-			pos.x += vel.x;
-			pos.y += vel.y;
+			pos.x += vel.x * 2.5f;
+			pos.y += vel.y * 2.5f;
+			vel.x = 0;
 			vel.y = 0;
 		}
 
 		//-velocity when in denial polarity
 		else if (s.get_state() == false)
 		{
-			pos.y -= vel.y;
+			pos.y -= vel.y * 1.8f;
 			vel.x = 0;
 			vel.y = 0;
 		}

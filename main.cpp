@@ -207,7 +207,7 @@ int main()
     Button Exit(300.f, 100.f, sf::Color::Red, sf::Color::White, 35);
 
     //Level1
-    float maxRoundTime = 91.f; //Level 1 Round Time
+    float maxRoundTime = 61.f; //Level 1 Round Time
     float currentRoundTime = maxRoundTime;
 
     float coinSpawnR = 0.7f; //Spawnrate For Coins
