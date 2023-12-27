@@ -6,17 +6,7 @@ Coin::Coin(int type, float vel_x, float vel_y, int windowWidth, int windowHeight
 
 	initTexture();
 	initSprite();
-
-	float boundsScale = 0.2f;
-
-	float minMargin = 0.f + boundsScale;
-	float maxMargin = 1.f - boundsScale;
-
-	float offsetX = windowWidth * minMargin;
-	float rangeX = windowWidth * maxMargin;
-
-	pos.x = offsetX + static_cast<float>(rand() % static_cast<int>(rangeX - offsetX));
-	pos.y = -200.f;
+	spawnCoin(windowWidth, windowHeight);
 
 	vel.x = vel_x;
 	vel.y = vel_y;
@@ -24,6 +14,9 @@ Coin::Coin(int type, float vel_x, float vel_y, int windowWidth, int windowHeight
 
 void Coin::initTexture()
 {
+	blurredCoin = new sf::Texture;
+	blurredCoin->loadFromFile("Assets/Sprites/BlurredCoin.png");
+
 	coinCopper = new sf::Texture;
 	coinCopper->loadFromFile("Assets/Sprites/CopperCoin.png");
 
@@ -36,6 +29,11 @@ void Coin::initTexture()
 
 void Coin::initSprite()
 {
+	if (coinType == 0)
+	{
+		sprite.setTexture(*blurredCoin);
+		value = 0;
+	}
 	if (coinType == 1)
 	{
 		sprite.setTexture(*coinCopper);
@@ -62,6 +60,32 @@ void Coin::render(sf::RenderWindow& window)
 	window.draw(sprite);
 }
 
+void::Coin::spawnCoin(int windowWidth, int windowHeight)
+{
+	//If the coins is not a main menu coin then spawn it with bounds. Else spawn coin on full screen.
+	if (coinType != 0)
+	{
+		float boundsScale = 0.2f;
+
+		float minMargin = 0.f + boundsScale;
+		float maxMargin = 1.f - boundsScale;
+
+		float offsetX = windowWidth * minMargin;
+		float rangeX = windowWidth * maxMargin;
+
+		pos.x = offsetX + static_cast<float>(rand() % static_cast<int>(rangeX - offsetX));
+		pos.y = -200.f;
+	}
+
+	else
+	{
+		pos.x = static_cast<float>(rand() % windowWidth);
+		pos.y = 0.f;
+	}
+
+}
+
+
 //Movement Interaction With The Magnet
 void Coin::update_physics(Magnet& s)
 {
@@ -72,7 +96,7 @@ void Coin::update_physics(Magnet& s)
 	//Pythagoras
 	float distance = sqrt(distance_x * distance_x + distance_y * distance_y);
 
-	if (distance < 300.f)
+	if (distance < 330.f)
 	{
 		//Divide each component (triangle lenght) by the distance inverse (normalization).
 
@@ -87,8 +111,8 @@ void Coin::update_physics(Magnet& s)
 		//+velocity when in attraction polarity
 		if (s.get_state() == true)
 		{
-			pos.x += vel.x * 2.5f;
-			pos.y += vel.y * 2.5f;
+			pos.x += vel.x * 3.f;
+			pos.y += vel.y * 3.f;
 			vel.x = 0;
 			vel.y = 0;
 		}
@@ -108,6 +132,12 @@ void Coin::update_physics(Magnet& s)
 		vel.y += fallSpeed;
 		pos.y += vel.y;
 	}
+}
+
+void Coin::fall_physics()
+{
+	vel.y += fallSpeed;
+	pos.y += vel.y * 1.4f;
 }
 
 sf::Vector2f Coin::get_pos()

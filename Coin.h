@@ -16,6 +16,7 @@ public:
 	sf::Texture* coinCopper;
 	sf::Texture* coinSilver;
 	sf::Texture* coinGold;
+	sf::Texture* blurredCoin;
 	sf::Sprite sprite;
 
 	float scale = 0.12f;
@@ -32,7 +33,11 @@ public:
 
 	void render(sf::RenderWindow& window);
 
+	void spawnCoin(int windowWidth, int windowHeight);
+
 	void update_physics(Magnet& s);
+
+	void fall_physics();
 
 	sf::Vector2f get_pos();
 };

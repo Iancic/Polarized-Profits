@@ -10,18 +10,20 @@ public:
 
 	sf::Texture* magnettextureBlue;
 	sf::Texture* magnettextureRed;
+	sf::Texture* wallettexture;
 	sf::Sprite magnetsprite;
 	sf::CircleShape radiusEffect;
 
 	sf::Vector2f pos;
 
 	float scale = 0.18f;
-	float movespeed = 4.f;
+	float magnetSpeed;
 	float radius = 200.f;
 
 	bool state = true; //True Means - Polarity (Attraction) & False Mean + Polarity
+	bool wallet = false;
 
-	Magnet(float pos_x, float pos_y);
+	Magnet(float pos_x, float pos_y, float moveSpeed, bool wallet);
 
 	void initTexture();
 
@@ -30,6 +32,8 @@ public:
 	void render(sf::RenderWindow& window);
 
 	void changePos(float dirRight, float dirLeft, float dirDown, float dirUp);
+
+	void changeHorizontal(float dirRight, float dirLeft);
 
 	void change_state();
 

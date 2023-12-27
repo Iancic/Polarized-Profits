@@ -29,7 +29,7 @@ void Pig::changePos(sf::RenderWindow& window, sf::Time counter)
 		timer = 0.f;
 
 		//Set The Bounds scale
-		float boundsScale = 0.1f;
+		float boundsScale = 0.25f;
 		float minMargin = 0.f + boundsScale;
 		float maxMargin = 1.f - boundsScale;
 

@@ -21,7 +21,7 @@ public:
 
 	int timer = 0.1f;
 	int maxTime = 60.f; //Lifetime of hand
-	int moveSpeed = 2.f;
+	int moveSpeed = 1.f;
 	int randomCoinPos;
 
 	float distance_x, distance_y;

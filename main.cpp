@@ -11,26 +11,45 @@
 #include "Background.h"
 #include "Transition.h"
 
-void MainMenu(sf::RenderWindow& window, TextUI& GameTitle1, TextUI& GameTitle2, TextUI& Author, Button& Start, Button& Exit, int emptyText)
+void MainMenu(sf::RenderWindow& window, int windowHeight, int windowWidth, std::vector<Coin>& coins, float& CurrentCoinSpawnR, float& coinSpawnR, TextUI& GameTitle1, TextUI& GameTitle2, TextUI& Author, Button& Start, Button& Exit, int emptyText, sf::Time deltaTime)
 {
     window.clear(sf::Color::White);
 
-    //Text Updates:
+    CurrentCoinSpawnR += deltaTime.asSeconds();
+
+    //Spawn Coins
+    if (CurrentCoinSpawnR >= coinSpawnR)
+    {
+        coins.push_back(Coin(0, 1.5f, 1.f, windowWidth, windowHeight));
+        CurrentCoinSpawnR = 0.f;
+    }
+
+    //Coin Updates: Iterate Through All Coins
+    for (int i = 0; i < coins.size(); i++)
+    {
+        coins[i].fall_physics();
+        coins[i].render(window);
+
+        //Erase coin if left the screen
+        if (coins[i].pos.y > windowHeight + 50.f)
+        {
+            coins.erase(coins.begin() + i);
+        }
+    }
+
     //Game Title
     GameTitle1.update("Polarized", true, NULL);
-    GameTitle1.render(window, 100.f, 50.f);
+    GameTitle1.render(window, windowWidth / 2 - 200.f, 50.f);
     GameTitle2.update("Profits", true, NULL);
-    GameTitle2.render(window, 160.f, 130.f);
-
-    //Author
+    GameTitle2.render(window, windowWidth / 2 - 60.f, 130.f);
     Author.update("Made by Iancic David", true, NULL);
-    Author.render(window, 210.f, 220.f);
+    Author.render(window, windowWidth / 2 - 60.f, 220.f);
 
     //Buttons
     Start.update("Start");
-    Start.render(window, 200.f, 280.f);
+    Start.render(window, windowWidth / 2 - 125.f, 280.f);
     Exit.update("Exit");
-    Exit.render(window, 200.f, 420.f);
+    Exit.render(window, windowWidth / 2 - 125.f, 420.f);
 }
 
 void Tutorial(sf::RenderWindow& window, Button& Proceed)
@@ -50,7 +69,7 @@ void Tutorial(sf::RenderWindow& window, Button& Proceed)
     Proceed.render(window, 950.f, 600.f);
 }
 
-void Level1(sf::RenderWindow& window, int windowHeight, int windowWidth, Background background, Transition transition, TextUI& Balance, TextUI& Timer, Magnet& magnet, Hand& leftHand, Hand& rightHand, std::vector<Coin>& coins, Pig& pig, float& balance, float dirLeft, float dirUp, float dirDown, float dirRight, float& CurrentCoinSpawnR, float& coinSpawnR, float currentRoundTime, sf::Time deltaTime)
+void Level1(sf::RenderWindow& window, int windowHeight, int windowWidth, Background background, Transition transition, TextUI& Balance, TextUI& Timer, Magnet& magnet, Hand& leftHand, Hand& rightHand, std::vector<Coin>& coins, Pig& pig, int& balance, float dirLeft, float dirUp, float dirDown, float dirRight, float& CurrentCoinSpawnR, float& coinSpawnR, float currentRoundTime, sf::Time deltaTime)
 {
     background.render(window);
 
@@ -68,14 +87,14 @@ void Level1(sf::RenderWindow& window, int windowHeight, int windowWidth, Backgro
             CurrentCoinSpawnR = 0.f;
         }
 
-        //Spawn Copper Coins (30%)
+        //Spawn Silver Coins (30%)
         else if (probability == 7 || probability == 8 || probability == 9)
         {
             coins.push_back(Coin(2, 1.5f, 1.f, windowWidth, windowHeight));
             CurrentCoinSpawnR = 0.f;
         }
 
-        //Spawn Copper Coins (10%)
+        //Spawn Gold Coins (10%)
         else if (probability == 10)
         {
             coins.push_back(Coin(3, 1.5f, 1.f, windowWidth, windowHeight));
@@ -129,6 +148,19 @@ void Level1(sf::RenderWindow& window, int windowHeight, int windowWidth, Backgro
         }
     }
 
+    //Movement Restrictions For Player
+    if (magnet.get_pos().x <= 0.f + magnet.magnetsprite.getTexture()->getSize().x / 2 * magnet.scale)
+        dirLeft = 0.f;
+
+    if (magnet.get_pos().x >= windowWidth - magnet.magnetsprite.getTexture()->getSize().x / 2 * magnet.scale)
+        dirRight = 0.f;
+
+    if (magnet.get_pos().y <= 0.f + magnet.magnetsprite.getTexture()->getSize().y / 2 * magnet.scale)
+        dirUp = 0.f;
+
+    if (magnet.get_pos().y >= windowHeight - magnet.magnetsprite.getTexture()->getSize().y / 2 * magnet.scale)
+        dirDown = 0.f;
+
     //Objects Updates:
     magnet.changePos(dirRight, dirLeft, dirDown, dirUp);
     magnet.render(window);
@@ -158,9 +190,56 @@ void Level1(sf::RenderWindow& window, int windowHeight, int windowWidth, Backgro
     //transition.render(window);
 }
 
-void Level2(sf::RenderWindow& window)
+void Level2(sf::RenderWindow& window, int windowHeight, int windowWidth, Magnet& wallet, std::vector<Coin>& coins, float dirLeft, float dirRight, float& CurrentCoinSpawnR, float& coinSpawnR, int& balance, int& coinCounter, sf::Time deltaTime)
 {
     window.clear(sf::Color::White);
+
+    CurrentCoinSpawnR += deltaTime.asSeconds();
+
+    if (CurrentCoinSpawnR >= coinSpawnR)
+    {
+        if (coinCounter < balance)
+        {
+            coins.push_back(Coin(1, 1.5f, 1.f, windowWidth, windowHeight));
+            coinCounter = coinCounter + 1;
+            CurrentCoinSpawnR = 0.f;
+        }
+    }
+
+    std::cout << coins.size();
+
+    if (!coins.empty())
+    {
+        //Coin Updates: Iterate Through All Coins
+        for (int i = 0; i < coins.size(); i++)
+        {
+            coins[i].fall_physics();
+            coins[i].render(window);
+
+            //Collision with Wallet. 
+            if (coins[i].sprite.getGlobalBounds().intersects(wallet.magnetsprite.getGlobalBounds()))
+            {
+                coins.erase(coins.begin() + i);
+            }
+
+            //Erase coin if left the screen
+            if (coins[i].pos.y > windowHeight + 50.f)
+            {
+                coins.erase(coins.begin() + i);
+            }
+        }
+    }
+
+    //Movement Restrictions For Player
+    if (wallet.get_pos().x <= 0.f + wallet.magnetsprite.getTexture()->getSize().x / 2 * wallet.scale)
+        dirLeft = 0.f;
+
+    if (wallet.get_pos().x >= windowWidth - wallet.magnetsprite.getTexture()->getSize().x / 2 * wallet.scale)
+        dirRight = 0.f;
+
+    //Objects Updates:
+    wallet.changeHorizontal(dirRight, dirLeft);
+    wallet.render(window);
 }
 
 void Outro(sf::RenderWindow& window)
@@ -170,59 +249,63 @@ void Outro(sf::RenderWindow& window)
 
 int main()
 {
-    //Window Settings
     int windowHeight = 720;
     int windowWidth = 1280;
 
     sf::RenderWindow window(sf::VideoMode(windowWidth, windowHeight), "Polarized Profits");
 
-    //How often does update run
-    window.setFramerateLimit(60);
+    sf::Image icon;
+    icon.loadFromFile("Assets/Sprites/Icon.png");
+    window.setIcon(icon.getSize().x, icon.getSize().y, icon.getPixelsPtr());
 
+    window.setFramerateLimit(60);
     window.setVerticalSyncEnabled(false);
 
     sf::Vector2i mousePosWindow = sf::Mouse::getPosition(window);
 
-    //Delta Time Clock
     sf::Clock clock;
     sf::Time deltaTime;
 
     //Game Logic
+    float dirLeft = 0.f, dirRight = 0.f, dirUp = 0.f, dirDown = 0.f; //Directions For Magnet Movement
     float polarityPressed = false; //Check for Polarity Input
-
-    float balance = 0.f; //Balance
+    int balance = 0; //Coin Balance During Level 1
+    int coinCounter = 0; //Final counter after collecting the coins
+    int hitpoints = 3; //Hitpoints Level 2
 
     //Scene Management
     enum scenes{MainMenuScene, TutorialScene, Level1Scene, Level2Scene, OutroScene};
     scenes currentscene = MainMenuScene;
 
     //Main Menu
-    TextUI GameTitle1(sf::Color::Red, 75);
-    TextUI GameTitle2(sf::Color::Blue, 75);
-    TextUI Author(sf::Color::Red, 25);
+    TextUI GameTitle1(sf::Color::Red, 85);
+    TextUI GameTitle2(sf::Color::Blue, 85);
+    TextUI Author(sf::Color::Red, 30);
 
-
-    Button Proceed(300.f, 100.f, sf::Color::Blue, sf::Color::White, 35);
-    Button Start(300.f, 100.f, sf::Color::Blue, sf::Color::White, 35);
-    Button Exit(300.f, 100.f, sf::Color::Red, sf::Color::White, 35);
+    Button Proceed(200.f, 80.f, sf::Color::Blue, sf::Color::White, 35);
+    Button Start(200.f, 80.f, sf::Color::Blue, sf::Color::White, 35);
+    Button Exit(200.f, 80.f, sf::Color::Red, sf::Color::White, 35);
 
     //Level1
-    float maxRoundTime = 61.f; //Level 1 Round Time
+    float maxRoundTime = 11.f; //Level 1 Round Time
     float currentRoundTime = maxRoundTime;
 
-    float coinSpawnR = 0.7f; //Spawnrate For Coins
-    float CurrentCoinSpawnR = 0.f;
+    std::vector<Coin> coins;
+    std::vector<Coin> pigCoins;
+    std::vector<Coin> mainMenuCoins;
 
-    //Directions For Magnet Movement
-    float dirLeft = 0.f, dirRight = 0.f, dirUp = 0.f, dirDown = 0.f;
+    float coinSpawnRMenu = 0.1f; //Spawnrate For Coins Main Menu
+    float coinSpawnR1 = 0.8f; //Spawnrate For Coins Level 1
+    float coinSpawnR2 = 1.f; //Spawnrate For Coins Level 2
+    float CurrentCoinSpawnR = 0.f;
 
     Background background(0.f, 0.f);
     TextUI Balance(sf::Color::White, 45);
     TextUI Timer(sf::Color::White, 50);
     Transition transition(0.f, 0.f);
 
-    std::vector<Coin> coins;
-    Magnet magnet(600, 500);
+    Magnet magnet(600, 500, 5.f, false);
+    Magnet wallet(600, 650, 10.f, true);
     Pig pig(600, 300);
     Hand leftHand(false, windowHeight, windowWidth);
     Hand rightHand(true, windowHeight, windowWidth);
@@ -251,16 +334,16 @@ int main()
 
             //Magnet Movement
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
-                dirLeft = magnet.get_speed();
+                dirLeft = 1.f;
 
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
-                dirRight = magnet.get_speed();
+                dirRight = 1.f;
 
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
-                dirUp = magnet.get_speed();
+                dirUp = 1.f;
 
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
-                dirDown = magnet.get_speed();
+                dirDown = 1.f;
 
             //Magnet Movement, Button Released, Reset Values
             if (event.type == sf::Event::KeyReleased)
@@ -297,20 +380,7 @@ int main()
                         currentscene = Level1Scene;
                 }
             }
-        }
-
-        //Movement Restrictions For Player
-        if (magnet.get_pos().x <= 0.f)
-            dirLeft = 0.f;
-
-        if (magnet.get_pos().x >= windowWidth)
-            dirRight = 0.f;
-
-        if (magnet.get_pos().y <= 0.f)
-            dirUp = 0.f;
-
-        if (magnet.get_pos().y >= windowHeight)
-            dirDown = 0.f;
+        } 
 
         //Level 1 Timer
         if (currentscene == 2)
@@ -323,16 +393,16 @@ int main()
         //Scene Manager 
         switch (currentscene) {
             case 0:
-                MainMenu(window, GameTitle1, GameTitle2, Author, Start, Exit, NULL);
+                MainMenu(window, windowHeight, windowWidth, mainMenuCoins, CurrentCoinSpawnR, coinSpawnRMenu, GameTitle1, GameTitle2, Author, Start, Exit, NULL, deltaTime);
                 break;
             case 1:
                 Tutorial(window, Proceed);
                 break;
             case 2:
-                Level1(window, windowHeight, windowWidth, background, transition, Balance, Timer, magnet, leftHand, rightHand, coins, pig, balance, dirLeft, dirUp, dirDown, dirRight, CurrentCoinSpawnR, coinSpawnR, currentRoundTime, deltaTime);
+                Level1(window, windowHeight, windowWidth, background, transition, Balance, Timer, magnet, leftHand, rightHand, coins, pig, balance, dirLeft, dirUp, dirDown, dirRight, CurrentCoinSpawnR, coinSpawnR1, currentRoundTime, deltaTime);
                 break;
             case 3:
-                Level2(window);
+                Level2(window, windowHeight, windowWidth, wallet, pigCoins, dirLeft, dirRight, CurrentCoinSpawnR ,coinSpawnR2, balance, coinCounter, deltaTime);
                 break;
             case 4:
                 Outro(window);

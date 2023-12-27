@@ -13,6 +13,9 @@ public:
 	sf::Font roboto;
 	sf::RectangleShape buttonBox;
 
+	float boxLenght;
+	float boxHeight;
+
 	Button(float sizeX, float sizeY, sf::Color boxcolor, sf::Color textcolor, int textsize);
 
 	void update(std::string phrase);
