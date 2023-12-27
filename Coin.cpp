@@ -15,7 +15,7 @@ Coin::Coin(int type, float vel_x, float vel_y, int windowWidth, int windowHeight
 void Coin::initTexture()
 {
 	blurredCoin = new sf::Texture;
-	blurredCoin->loadFromFile("Assets/Sprites/BlurredCoin.png");
+	blurredCoin->loadFromFile("Assets/Sprites/SilverCoin.png");
 
 	coinCopper = new sf::Texture;
 	coinCopper->loadFromFile("Assets/Sprites/CopperCoin.png");
@@ -65,7 +65,7 @@ void::Coin::spawnCoin(int windowWidth, int windowHeight)
 	//If the coins is not a main menu coin then spawn it with bounds. Else spawn coin on full screen.
 	if (coinType != 0)
 	{
-		float boundsScale = 0.2f;
+		float boundsScale = 0.15f;
 
 		float minMargin = 0.f + boundsScale;
 		float maxMargin = 1.f - boundsScale;
@@ -84,7 +84,6 @@ void::Coin::spawnCoin(int windowWidth, int windowHeight)
 	}
 
 }
-
 
 //Movement Interaction With The Magnet
 void Coin::update_physics(Magnet& s)
@@ -111,15 +110,15 @@ void Coin::update_physics(Magnet& s)
 		//+velocity when in attraction polarity
 		if (s.get_state() == true)
 		{
-			pos.x += vel.x * 1.5f;
-			pos.y += vel.y * 1.5f;
+			pos.x += vel.x * 1.3f;
+			pos.y += vel.y * 1.3f;
 			vel.y = 0;
 		}
 
 		//-velocity when in denial polarity
 		else if (s.get_state() == false)
 		{
-			pos.y -= vel.y * 1.8f;
+			pos.y -= vel.y * 2.f;
 			vel.x = 0;
 			vel.y = 0;
 		}

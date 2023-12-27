@@ -11,7 +11,7 @@
 #include "Background.h"
 #include "Transition.h"
 
-void MainMenu(sf::RenderWindow& window, int windowHeight, int windowWidth, std::vector<Coin>& coins, float& CurrentCoinSpawnR, float& coinSpawnR, TextUI& GameTitle1, TextUI& GameTitle2, TextUI& Author, Button& Start, Button& Exit, int emptyText, sf::Time deltaTime)
+void MainMenu(sf::RenderWindow& window, int windowHeight, int windowWidth, std::vector<int> toErase, std::vector<Coin>& coins, float& CurrentCoinSpawnR, float& coinSpawnR, TextUI& GameTitle1, TextUI& GameTitle2, TextUI& Author, Button& Start, Button& Exit, int emptyText, sf::Time deltaTime)
 {
     window.clear(sf::Color::White);
 
@@ -23,9 +23,6 @@ void MainMenu(sf::RenderWindow& window, int windowHeight, int windowWidth, std::
         coins.push_back(Coin(0, 1.5f, 1.f, windowWidth, windowHeight));
         CurrentCoinSpawnR = 0.f;
     }
-
-
-    std::vector<int> toErase;
 
     //Coin Updates
     for (int i = 0; i < coins.size(); i++)
@@ -48,15 +45,18 @@ void MainMenu(sf::RenderWindow& window, int windowHeight, int windowWidth, std::
     //UI Updates
     //Game Title
     GameTitle1.update("Polarized", true, NULL);
-    GameTitle1.render(window, windowWidth / 2 - 200.f, 50.f);
+    GameTitle1.render(window, windowWidth / 2 - 450.f, 30.f);
+
     GameTitle2.update("Profits", true, NULL);
-    GameTitle2.render(window, windowWidth / 2 - 60.f, 130.f);
+    GameTitle2.render(window, windowWidth / 2 - 60.f, 110.f);
+
     Author.update("Made by Iancic David", true, NULL);
-    Author.render(window, windowWidth / 2 - 60.f, 220.f);
+    Author.render(window, windowWidth - 350.f, windowHeight - 50.f);
 
     //Buttons
     Start.update("Start");
-    Start.render(window, windowWidth / 2 - 125.f, 280.f);
+    Start.render(window, windowWidth / 2 - 125.f, 320.f);
+
     Exit.update("Exit");
     Exit.render(window, windowWidth / 2 - 125.f, 420.f);
 }
@@ -71,7 +71,7 @@ void Tutorial(sf::RenderWindow& window, Button& Proceed, sf::Sprite& tutorialspr
     Proceed.render(window, 950.f, 600.f);
 }
 
-void Level1(sf::RenderWindow& window, int windowHeight, int windowWidth, Background background, Transition transition, TextUI& Balance, TextUI& Timer, Magnet& magnet, Hand& leftHand, Hand& rightHand, std::vector<Coin>& coins, Pig& pig, int& balance, float dirLeft, float dirUp, float dirDown, float dirRight, float& CurrentCoinSpawnR, float& coinSpawnR, float currentRoundTime, sf::Time deltaTime)
+void Level1(sf::RenderWindow& window, int windowHeight, int windowWidth, std::vector<int> toErase, Background background, Transition transition, TextUI& Balance, TextUI& Timer, Magnet& magnet, Hand& leftHand, Hand& rightHand, std::vector<Coin>& coins, Pig& pig, int& balance, float dirLeft, float dirUp, float dirDown, float dirRight, float& CurrentCoinSpawnR, float& coinSpawnR, float currentRoundTime, sf::Time deltaTime)
 {
     background.render(window);
 
@@ -103,8 +103,6 @@ void Level1(sf::RenderWindow& window, int windowHeight, int windowWidth, Backgro
             CurrentCoinSpawnR = 0.f;
         }
     }
-
-    std::vector<int> toErase;
 
     //Coin Updates
     for (int i = 0; i < coins.size(); i++)
@@ -197,7 +195,7 @@ void Level1(sf::RenderWindow& window, int windowHeight, int windowWidth, Backgro
     Timer.render(window, windowWidth / 2 - 125.f, 0.f);
 }
 
-void Level2(sf::RenderWindow& window, int windowHeight, int windowWidth, Magnet& wallet, TextUI Score, std::vector<Coin>& coins, float dirLeft, float dirRight, float& CurrentCoinSpawnR, float& coinSpawnR, int& balance, int& finalBalance, int& coinCounter, sf::Time deltaTime)
+void Level2(sf::RenderWindow& window, int windowHeight, int windowWidth, Magnet& wallet, TextUI Score, std::vector<int> toErase, std::vector<Coin>& coins, float dirLeft, float dirRight, float& CurrentCoinSpawnR, float& coinSpawnR, int& balance, int& finalBalance, int& coinCounter, sf::Time deltaTime)
 {
     window.clear(sf::Color::White);
 
@@ -212,8 +210,6 @@ void Level2(sf::RenderWindow& window, int windowHeight, int windowWidth, Magnet&
             CurrentCoinSpawnR = 0.f;
         }
     }
-
-    std::vector<int> toErase;
 
     //Coin Updates
     for (int i = 0; i < coins.size(); i++)
@@ -282,6 +278,7 @@ int main()
 
     //Game Logic
     float dirLeft = 0.f, dirRight = 0.f, dirUp = 0.f, dirDown = 0.f; //Directions For Magnet Movement
+    std::vector<int> toErase;
    
     //Level 1
     float maxRoundTime = 11.f; //TESTING PURPOSES
@@ -303,9 +300,9 @@ int main()
     std::vector<Coin> mainMenuCoins;
     float coinSpawnRMenu = 0.4f; //Spawnrate For Coins Main Menu
 
-    TextUI GameTitle1(sf::Color::Red, 85);
-    TextUI GameTitle2(sf::Color::Blue, 85);
-    TextUI Author(sf::Color::Red, 30);
+    TextUI GameTitle1(sf::Color::Red, 130);
+    TextUI GameTitle2(sf::Color::Blue, 140);
+    TextUI Author(sf::Color::White, 30);
 
     Button Proceed(200.f, 80.f, sf::Color::Blue, sf::Color::White, 35);
     Button Start(200.f, 80.f, sf::Color::Blue, sf::Color::White, 35);
@@ -337,7 +334,7 @@ int main()
 
     //Level2 Objects
     TextUI Score(sf::Color::Yellow, 65);
-    Magnet wallet(600, 550, 8.f, true);
+    Magnet wallet(600, 550, 6.5f, true);
 
     std::vector<Coin> pigCoins;
     float coinSpawnR2 = 0.8f; //Spawnrate For Coins Level 2
@@ -426,16 +423,16 @@ int main()
         //Scene Manager 
         switch (currentscene) {
             case 0:
-                MainMenu(window, windowHeight, windowWidth, mainMenuCoins, CurrentCoinSpawnR, coinSpawnRMenu, GameTitle1, GameTitle2, Author, Start, Exit, NULL, deltaTime);
+                MainMenu(window, windowHeight, windowWidth, toErase, mainMenuCoins, CurrentCoinSpawnR, coinSpawnRMenu, GameTitle1, GameTitle2, Author, Start, Exit, NULL, deltaTime);
                 break;
             case 1:
                 Tutorial(window, Proceed, tutorialsprite);
                 break;
             case 2:
-                Level1(window, windowHeight, windowWidth, background, transition, Balance, Timer, magnet, leftHand, rightHand, coins, pig, balance, dirLeft, dirUp, dirDown, dirRight, CurrentCoinSpawnR, coinSpawnR1, currentRoundTime, deltaTime);
+                Level1(window, windowHeight, windowWidth, toErase, background, transition, Balance, Timer, magnet, leftHand, rightHand, coins, pig, balance, dirLeft, dirUp, dirDown, dirRight, CurrentCoinSpawnR, coinSpawnR1, currentRoundTime, deltaTime);
                 break;
             case 3:
-                Level2(window, windowHeight, windowWidth, wallet, Score, pigCoins, dirLeft, dirRight, CurrentCoinSpawnR ,coinSpawnR2, balance, finalBalance, coinCounter, deltaTime);
+                Level2(window, windowHeight, windowWidth, wallet, Score, toErase, pigCoins, dirLeft, dirRight, CurrentCoinSpawnR ,coinSpawnR2, balance, finalBalance, coinCounter, deltaTime);
                 break;
             case 4:
                 Outro(window);

@@ -21,22 +21,37 @@ Hand::Hand(bool type, int windowHeight, int windowWidth)
 
 void Hand::initTexture()
 {
-	handtexture = new sf::Texture;
-	if (hand_type)
-		handtexture->loadFromFile("Assets/Sprites/01.png");
-	else
-		handtexture->loadFromFile("Assets/Sprites/LeftHand.png");
+	inTexture1 = new sf::Texture;
+	inTexture2 = new sf::Texture;
+	inTexture3 = new sf::Texture;
 
-	fisttexture = new sf::Texture;
 	if (hand_type)
-		fisttexture->loadFromFile("Assets/Sprites/RightFist.png");
+	{
+		inTexture1->loadFromFile("Assets/Sprites/in_01d.png");
+		inTexture2->loadFromFile("Assets/Sprites/in_02d.png");
+		inTexture3->loadFromFile("Assets/Sprites/in_03d.png");
+	}
 	else
-		fisttexture->loadFromFile("Assets/Sprites/LeftFist.png");
+	{
+		inTexture1->loadFromFile("Assets/Sprites/in_01s.png");
+		inTexture2->loadFromFile("Assets/Sprites/in_02s.png");
+		inTexture3->loadFromFile("Assets/Sprites/in_03s.png");
+	}
+
+	outTexture = new sf::Texture;
+	if (hand_type)
+	{
+		outTexture->loadFromFile("Assets/Sprites/out_01d.png");
+	}
+	else
+	{
+		outTexture->loadFromFile("Assets/Sprites/out_01s.png");
+	}
 }
 
 void Hand::initSprite()
 {
-	sprite_hand.setTexture(*handtexture);
+	sprite_hand.setTexture(*inTexture1);
 	sprite_hand.setScale(scale, scale);
 
 	if (hand_type)
@@ -47,7 +62,19 @@ void Hand::initSprite()
 
 void Hand::moveHand(std::vector<Coin>& coins)
 {
-	sprite_hand.setTexture(*handtexture);
+	if (changeTexture == true)
+	{
+		int random = (rand() % 3) + 1;
+
+		if (random == 1)
+			sprite_hand.setTexture(*inTexture1);
+		else if (random == 2)
+			sprite_hand.setTexture(*inTexture2);
+		else if (random == 3)
+			sprite_hand.setTexture(*inTexture3);
+
+		changeTexture = false;
+	}
 
 	if (coins.empty())
 		return;
@@ -70,7 +97,9 @@ void Hand::moveHand(std::vector<Coin>& coins)
 
 void Hand::retractHand()
 {
-	sprite_hand.setTexture(*fisttexture);
+	changeTexture = true;
+
+	sprite_hand.setTexture(*outTexture);
 
 	if (hand_type == false)
 		pos.x -= moveSpeed;
