@@ -7,7 +7,6 @@ class Magnet
 
 public:
 
-
 	sf::Texture* magnettextureBlue;
 	sf::Texture* magnettextureRed;
 	sf::Texture* wallettexture;
@@ -16,7 +15,7 @@ public:
 
 	sf::Vector2f pos;
 
-	float scale = 0.18f;
+	float scale = 0.165f;
 	float magnetSpeed;
 	float radius = 200.f;
 

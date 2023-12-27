@@ -13,7 +13,7 @@ public:
 	sf::Texture* pigtexture;
 	sf::Sprite sprite;
 
-	float maxTime = 11.f, timer = 0.f;
+	float maxTime = 9.f, timer = 0.f;
 
 	float scale = 0.18f;
 

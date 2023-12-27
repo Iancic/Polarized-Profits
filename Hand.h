@@ -25,7 +25,7 @@ public:
 	int randomCoinPos;
 
 	float distance_x, distance_y;
-	float scale = 0.3f;
+	float scale = 0.4f;
 
 	Hand(bool type, int windowHeight, int windowWidth);
 

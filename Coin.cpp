@@ -111,9 +111,8 @@ void Coin::update_physics(Magnet& s)
 		//+velocity when in attraction polarity
 		if (s.get_state() == true)
 		{
-			pos.x += vel.x * 3.f;
-			pos.y += vel.y * 3.f;
-			vel.x = 0;
+			pos.x += vel.x * 1.5f;
+			pos.y += vel.y * 1.5f;
 			vel.y = 0;
 		}
 

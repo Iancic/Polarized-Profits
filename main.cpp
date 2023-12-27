@@ -24,19 +24,28 @@ void MainMenu(sf::RenderWindow& window, int windowHeight, int windowWidth, std::
         CurrentCoinSpawnR = 0.f;
     }
 
-    //Coin Updates: Iterate Through All Coins
+
+    std::vector<int> toErase;
+
+    //Coin Updates
     for (int i = 0; i < coins.size(); i++)
     {
         coins[i].fall_physics();
         coins[i].render(window);
 
         //Erase coin if left the screen
-        if (coins[i].pos.y > windowHeight + 50.f)
+        if (coins[i].pos.y > windowHeight)
         {
-            coins.erase(coins.begin() + i);
+            toErase.push_back(i);
         }
     }
 
+    for (int i = toErase.size() - 1; i >= 0; i--)
+    {
+        coins.erase(coins.begin() + toErase[i]);
+    }
+
+    //UI Updates
     //Game Title
     GameTitle1.update("Polarized", true, NULL);
     GameTitle1.render(window, windowWidth / 2 - 200.f, 50.f);
@@ -52,19 +61,12 @@ void MainMenu(sf::RenderWindow& window, int windowHeight, int windowWidth, std::
     Exit.render(window, windowWidth / 2 - 125.f, 420.f);
 }
 
-void Tutorial(sf::RenderWindow& window, Button& Proceed)
+void Tutorial(sf::RenderWindow& window, Button& Proceed, sf::Sprite& tutorialsprite)
 {
     //Tutorial Background
-    sf::Texture* tutorial;
-    sf::Sprite tutorialsprite;
-
-    tutorial = new sf::Texture;
-    tutorial->loadFromFile("Assets/Sprites/Tutorial.png");
-    tutorialsprite.setTexture(*tutorial);
-
     window.draw(tutorialsprite);
 
-    //Button
+    //UI Updates
     Proceed.update("Proceed");
     Proceed.render(window, 950.f, 600.f);
 }
@@ -102,24 +104,26 @@ void Level1(sf::RenderWindow& window, int windowHeight, int windowWidth, Backgro
         }
     }
 
-    //Coin Updates: Iterate Through All Coins
+    std::vector<int> toErase;
+
+    //Coin Updates
     for (int i = 0; i < coins.size(); i++)
     {
         coins[i].update_physics(magnet);
         coins[i].render(window);
 
-        //Collision with Piggy Bank. 
+        //Collision with Piggy Bank 
         if (coins[i].sprite.getGlobalBounds().intersects(pig.sprite.getGlobalBounds()))
         {
             balance = balance + coins[i].value;
-            coins.erase(coins.begin() + i);
+            toErase.push_back(i);
         }
 
-        //Collision with Magnet. 
+        //Collision with Magnet
         else if (coins[i].sprite.getGlobalBounds().intersects(magnet.magnetsprite.getGlobalBounds()))
         {
             balance = balance - coins[i].value;
-            coins.erase(coins.begin() + i);
+            toErase.push_back(i);
         }
 
         //Collision with Left Hand
@@ -128,7 +132,7 @@ void Level1(sf::RenderWindow& window, int windowHeight, int windowWidth, Backgro
             leftHand.retracting = true;
             balance = balance - 1;
 
-            coins.erase(coins.begin() + i);
+            toErase.push_back(i);
         }
 
         //Collision with Right Hand
@@ -137,15 +141,20 @@ void Level1(sf::RenderWindow& window, int windowHeight, int windowWidth, Backgro
             rightHand.retracting = true;
             balance = balance - 1;
 
-            coins.erase(coins.begin() + i);
+            toErase.push_back(i);
         }
 
         //Erase coin if left the screen
         if (coins[i].pos.y > windowHeight + 50.f)
         {
             balance = balance - coins[i].value;
-            coins.erase(coins.begin() + i);
+            toErase.push_back(i);
         }
+    }
+
+    for (int i = toErase.size() - 1; i >= 0; i--)
+    {
+        coins.erase(coins.begin() + toErase[i]);
     }
 
     //Movement Restrictions For Player
@@ -161,7 +170,7 @@ void Level1(sf::RenderWindow& window, int windowHeight, int windowWidth, Backgro
     if (magnet.get_pos().y >= windowHeight - magnet.magnetsprite.getTexture()->getSize().y / 2 * magnet.scale)
         dirDown = 0.f;
 
-    //Objects Updates:
+    //Objects Updates
     magnet.changePos(dirRight, dirLeft, dirDown, dirUp);
     magnet.render(window);
 
@@ -180,17 +189,15 @@ void Level1(sf::RenderWindow& window, int windowHeight, int windowWidth, Backgro
         rightHand.retractHand();
     rightHand.render(window);
 
-    //UI Updates:
+    //UI Updates
     Balance.update("euro", false, balance);
     Balance.render(window, windowWidth / 2 - 55.f, windowHeight - 50.f);
+
     Timer.update("seconds", false, currentRoundTime);
     Timer.render(window, windowWidth / 2 - 125.f, 0.f);
-
-    //transition.update();
-    //transition.render(window);
 }
 
-void Level2(sf::RenderWindow& window, int windowHeight, int windowWidth, Magnet& wallet, std::vector<Coin>& coins, float dirLeft, float dirRight, float& CurrentCoinSpawnR, float& coinSpawnR, int& balance, int& coinCounter, sf::Time deltaTime)
+void Level2(sf::RenderWindow& window, int windowHeight, int windowWidth, Magnet& wallet, TextUI Score, std::vector<Coin>& coins, float dirLeft, float dirRight, float& CurrentCoinSpawnR, float& coinSpawnR, int& balance, int& finalBalance, int& coinCounter, sf::Time deltaTime)
 {
     window.clear(sf::Color::White);
 
@@ -206,28 +213,31 @@ void Level2(sf::RenderWindow& window, int windowHeight, int windowWidth, Magnet&
         }
     }
 
-    std::cout << coins.size();
+    std::vector<int> toErase;
 
-    if (!coins.empty())
+    //Coin Updates
+    for (int i = 0; i < coins.size(); i++)
     {
-        //Coin Updates: Iterate Through All Coins
-        for (int i = 0; i < coins.size(); i++)
+        coins[i].fall_physics();
+        coins[i].render(window);
+
+        //Collision with Wallet
+        if (coins[i].sprite.getGlobalBounds().intersects(wallet.magnetsprite.getGlobalBounds()))
         {
-            coins[i].fall_physics();
-            coins[i].render(window);
-
-            //Collision with Wallet. 
-            if (coins[i].sprite.getGlobalBounds().intersects(wallet.magnetsprite.getGlobalBounds()))
-            {
-                coins.erase(coins.begin() + i);
-            }
-
-            //Erase coin if left the screen
-            if (coins[i].pos.y > windowHeight + 50.f)
-            {
-                coins.erase(coins.begin() + i);
-            }
+            finalBalance += 1;
+            toErase.push_back(i);
         }
+
+        //Erase coin if left the screen
+        if (coins[i].pos.y > windowHeight + 50.f)
+        {
+            toErase.push_back(i);
+        }
+    }
+
+    for (int i = toErase.size() - 1; i >= 0; i--)
+    {
+        coins.erase(coins.begin() + toErase[i]);
     }
 
     //Movement Restrictions For Player
@@ -237,9 +247,13 @@ void Level2(sf::RenderWindow& window, int windowHeight, int windowWidth, Magnet&
     if (wallet.get_pos().x >= windowWidth - wallet.magnetsprite.getTexture()->getSize().x / 2 * wallet.scale)
         dirRight = 0.f;
 
-    //Objects Updates:
+    //Objects Updates
     wallet.changeHorizontal(dirRight, dirLeft);
     wallet.render(window);
+
+    //UI Updates
+    Score.update("Wallet", false, finalBalance);
+    Score.render(window, windowWidth / 2 - 55.f, windowHeight - 100.f);
 }
 
 void Outro(sf::RenderWindow& window)
@@ -257,7 +271,7 @@ int main()
     sf::Image icon;
     icon.loadFromFile("Assets/Sprites/Icon.png");
     window.setIcon(icon.getSize().x, icon.getSize().y, icon.getPixelsPtr());
-
+     
     window.setFramerateLimit(60);
     window.setVerticalSyncEnabled(false);
 
@@ -268,8 +282,16 @@ int main()
 
     //Game Logic
     float dirLeft = 0.f, dirRight = 0.f, dirUp = 0.f, dirDown = 0.f; //Directions For Magnet Movement
+   
+    //Level 1
+    float maxRoundTime = 11.f; //TESTING PURPOSES
+    //float maxRoundTime = 91.f; //Level 1 ROUND TIME
+    float currentRoundTime = maxRoundTime;
     float polarityPressed = false; //Check for Polarity Input
     int balance = 0; //Coin Balance During Level 1
+
+    //Level 2
+    int finalBalance = 0; //Final Score
     int coinCounter = 0; //Final counter after collecting the coins
     int hitpoints = 3; //Hitpoints Level 2
 
@@ -278,6 +300,9 @@ int main()
     scenes currentscene = MainMenuScene;
 
     //Main Menu
+    std::vector<Coin> mainMenuCoins;
+    float coinSpawnRMenu = 0.4f; //Spawnrate For Coins Main Menu
+
     TextUI GameTitle1(sf::Color::Red, 85);
     TextUI GameTitle2(sf::Color::Blue, 85);
     TextUI Author(sf::Color::Red, 30);
@@ -286,17 +311,18 @@ int main()
     Button Start(200.f, 80.f, sf::Color::Blue, sf::Color::White, 35);
     Button Exit(200.f, 80.f, sf::Color::Red, sf::Color::White, 35);
 
-    //Level1
-    float maxRoundTime = 11.f; //Level 1 Round Time
-    float currentRoundTime = maxRoundTime;
+    //Tutorial
+    sf::Texture* tutorial;
+    sf::Sprite tutorialsprite;
 
+    tutorial = new sf::Texture;
+    tutorial->loadFromFile("Assets/Sprites/Tutorial.png");
+    tutorialsprite.setTexture(*tutorial);
+
+    //Level1 Objects
     std::vector<Coin> coins;
-    std::vector<Coin> pigCoins;
-    std::vector<Coin> mainMenuCoins;
 
-    float coinSpawnRMenu = 0.1f; //Spawnrate For Coins Main Menu
-    float coinSpawnR1 = 0.8f; //Spawnrate For Coins Level 1
-    float coinSpawnR2 = 1.f; //Spawnrate For Coins Level 2
+    float coinSpawnR1 = 0.7f; //Spawnrate For Coins Level 1
     float CurrentCoinSpawnR = 0.f;
 
     Background background(0.f, 0.f);
@@ -305,10 +331,17 @@ int main()
     Transition transition(0.f, 0.f);
 
     Magnet magnet(600, 500, 5.f, false);
-    Magnet wallet(600, 650, 10.f, true);
     Pig pig(600, 300);
     Hand leftHand(false, windowHeight, windowWidth);
     Hand rightHand(true, windowHeight, windowWidth);
+
+    //Level2 Objects
+    TextUI Score(sf::Color::Yellow, 65);
+    Magnet wallet(600, 550, 8.f, true);
+
+    std::vector<Coin> pigCoins;
+    float coinSpawnR2 = 0.8f; //Spawnrate For Coins Level 2
+
 
     while (window.isOpen())
     {
@@ -396,13 +429,13 @@ int main()
                 MainMenu(window, windowHeight, windowWidth, mainMenuCoins, CurrentCoinSpawnR, coinSpawnRMenu, GameTitle1, GameTitle2, Author, Start, Exit, NULL, deltaTime);
                 break;
             case 1:
-                Tutorial(window, Proceed);
+                Tutorial(window, Proceed, tutorialsprite);
                 break;
             case 2:
                 Level1(window, windowHeight, windowWidth, background, transition, Balance, Timer, magnet, leftHand, rightHand, coins, pig, balance, dirLeft, dirUp, dirDown, dirRight, CurrentCoinSpawnR, coinSpawnR1, currentRoundTime, deltaTime);
                 break;
             case 3:
-                Level2(window, windowHeight, windowWidth, wallet, pigCoins, dirLeft, dirRight, CurrentCoinSpawnR ,coinSpawnR2, balance, coinCounter, deltaTime);
+                Level2(window, windowHeight, windowWidth, wallet, Score, pigCoins, dirLeft, dirRight, CurrentCoinSpawnR ,coinSpawnR2, balance, finalBalance, coinCounter, deltaTime);
                 break;
             case 4:
                 Outro(window);

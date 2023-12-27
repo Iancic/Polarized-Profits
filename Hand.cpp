@@ -23,7 +23,7 @@ void Hand::initTexture()
 {
 	handtexture = new sf::Texture;
 	if (hand_type)
-		handtexture->loadFromFile("Assets/Sprites/RightHand.png");
+		handtexture->loadFromFile("Assets/Sprites/01.png");
 	else
 		handtexture->loadFromFile("Assets/Sprites/LeftHand.png");
 
