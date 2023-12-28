@@ -11,7 +11,7 @@
 #include "Background.h"
 #include "Transition.h"
 
-void MainMenu(sf::RenderWindow& window, int windowHeight, int windowWidth, std::vector<int> toErase, std::vector<Coin>& coins, float& CurrentCoinSpawnR, float& coinSpawnR, TextUI& GameTitle1, TextUI& GameTitle2, TextUI& Author, Button& Start, Button& Exit, int emptyText, sf::Time deltaTime)
+void MainMenu(sf::RenderWindow& window, int windowHeight, int windowWidth, std::vector<int> toErase, std::vector<Coin>& coins, float& CurrentCoinSpawnR, float& coinSpawnR, TextUI& GameTitle1, TextUI& GameTitle2, TextUI& Author, Button& Start, Button& Exit, int emptyText, Transition& transition, sf::Time deltaTime)
 {
     window.clear(sf::Color::White);
 
@@ -59,6 +59,10 @@ void MainMenu(sf::RenderWindow& window, int windowHeight, int windowWidth, std::
 
     Exit.update("Exit");
     Exit.render(window, windowWidth / 2 - 125.f, 420.f);
+
+    //Transition
+    transition.fadeIn(deltaTime);
+    transition.render(window);
 }
 
 void Tutorial(sf::RenderWindow& window, Button& Proceed, sf::Sprite& tutorialsprite)
@@ -193,6 +197,8 @@ void Level1(sf::RenderWindow& window, int windowHeight, int windowWidth, std::ve
 
     Timer.update("seconds", false, currentRoundTime);
     Timer.render(window, windowWidth / 2 - 125.f, 0.f);
+
+    
 }
 
 void Level2(sf::RenderWindow& window, int windowHeight, int windowWidth, Magnet& wallet, TextUI Score, std::vector<int> toErase, std::vector<Coin>& coins, float dirLeft, float dirRight, float& CurrentCoinSpawnR, float& coinSpawnR, int& balance, int& finalBalance, int& coinCounter, sf::Time deltaTime)
@@ -281,8 +287,7 @@ int main()
     std::vector<int> toErase;
    
     //Level 1
-    float maxRoundTime = 11.f; //TESTING PURPOSES
-    //float maxRoundTime = 91.f; //Level 1 ROUND TIME
+    float maxRoundTime = 91.f; 
     float currentRoundTime = maxRoundTime;
     float polarityPressed = false; //Check for Polarity Input
     int balance = 0; //Coin Balance During Level 1
@@ -298,7 +303,7 @@ int main()
 
     //Main Menu
     std::vector<Coin> mainMenuCoins;
-    float coinSpawnRMenu = 0.4f; //Spawnrate For Coins Main Menu
+    float coinSpawnRMenu = 0.15f; //Spawnrate For Coins Main Menu
 
     TextUI GameTitle1(sf::Color::Red, 130);
     TextUI GameTitle2(sf::Color::Blue, 140);
@@ -325,7 +330,7 @@ int main()
     Background background(0.f, 0.f);
     TextUI Balance(sf::Color::White, 45);
     TextUI Timer(sf::Color::White, 50);
-    Transition transition(0.f, 0.f);
+    Transition transition(windowHeight, windowWidth);
 
     Magnet magnet(600, 500, 5.f, false);
     Pig pig(600, 300);
@@ -423,7 +428,7 @@ int main()
         //Scene Manager 
         switch (currentscene) {
             case 0:
-                MainMenu(window, windowHeight, windowWidth, toErase, mainMenuCoins, CurrentCoinSpawnR, coinSpawnRMenu, GameTitle1, GameTitle2, Author, Start, Exit, NULL, deltaTime);
+                MainMenu(window, windowHeight, windowWidth, toErase, mainMenuCoins, CurrentCoinSpawnR, coinSpawnRMenu, GameTitle1, GameTitle2, Author, Start, Exit, NULL, transition, deltaTime);
                 break;
             case 1:
                 Tutorial(window, Proceed, tutorialsprite);

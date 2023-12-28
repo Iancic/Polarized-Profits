@@ -15,7 +15,7 @@ public:
 
 	sf::Vector2f pos;
 
-	float scale = 0.165f;
+	float scale = 0.18f;
 	float magnetSpeed;
 	float radius = 200.f;
 

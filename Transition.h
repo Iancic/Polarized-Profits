@@ -9,16 +9,23 @@ class Transition
 public:
 
 	sf::Vector2f pos;
+	sf::Vector2f currentSize;
 	sf::RectangleShape box;
-	
-	float size;
-	float scale = 1.f;
 
-	Transition(float posX, float posY);
+	int alpha = 255;
+
+	float fadeSpeedFinal = 500.f;
+	float fadeSpeedStart = 1.f;
+	float sizeX;
+	float sizeY;
+
+	Transition(int windowHeight, int windowWidth);
 
 	void initSprite();
 
-	void render(sf::RenderWindow& window);
+	void fadeIn(sf::Time deltaTime);
 
-	void update();
+	void fadeOut(sf::Time deltaTime);
+
+	void render(sf::RenderWindow& window);
 };

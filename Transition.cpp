@@ -1,30 +1,45 @@
 # include "Transition.h"
 
-Transition::Transition(float posX, float posY)
+Transition::Transition(int windowHeight, int windowWidth)
 {
-	pos.x = posX;
-	pos.y = posY;
+	pos.x = 0.f;
+	pos.y = 0.f;
 
-	size = 100.f;
+	sizeX = windowWidth;
+	sizeY = windowHeight;
 
 	initSprite();
 }
 
 void Transition::initSprite()
 {
-	box.setSize(sf::Vector2f(size, size));
+	box.setSize(sf::Vector2f(sizeX, sizeY));
 	box.setPosition(pos);
-	box.setFillColor(sf::Color::Black);
+	box.setFillColor(sf::Color(0, 0, 0, 255));
 }
 
-void Transition::update()
+void Transition::fadeIn(sf::Time deltaTime)
 {
-	sf::Vector2f currentSize = box.getSize();
-	currentSize += sf::Vector2f(10.f, 10.f);
-	box.setSize(currentSize);
+	if (alpha <= 240.f)
+		alpha -= fadeSpeedFinal * deltaTime.asSeconds();
+	else
+		alpha -= fadeSpeedStart * deltaTime.asSeconds();
+	if (alpha <= 0.f)
+		alpha = 0.f;
+}
+
+void Transition::fadeOut(sf::Time deltaTime)
+{
+	if (alpha >= 10.f)
+		alpha += fadeSpeedFinal * deltaTime.asSeconds();
+	else
+		alpha += fadeSpeedStart * deltaTime.asSeconds();
+	if (alpha >= 255.f)
+		alpha = 255.f;
 }
 
 void Transition::render(sf::RenderWindow& window)
 {
+	box.setFillColor(sf::Color(0, 0, 0, alpha));
 	window.draw(box);
 }
