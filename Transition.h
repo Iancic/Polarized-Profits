@@ -12,12 +12,18 @@ public:
 	sf::Vector2f currentSize;
 	sf::RectangleShape box;
 
+	//Scene Management
+	enum scenes { MainMenuScene, TutorialScene, Level1Scene, Level2Scene, OutroScene };
+	scenes currentscene = MainMenuScene;
+
 	int alpha = 255;
 
 	float fadeSpeedFinal = 500.f;
 	float fadeSpeedStart = 1.f;
 	float sizeX;
 	float sizeY;
+
+	bool isFadeOut = false;
 
 	Transition(int windowHeight, int windowWidth);
 

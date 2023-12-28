@@ -20,22 +20,43 @@ void Transition::initSprite()
 
 void Transition::fadeIn(sf::Time deltaTime)
 {
-	if (alpha <= 240.f)
-		alpha -= fadeSpeedFinal * deltaTime.asSeconds();
-	else
-		alpha -= fadeSpeedStart * deltaTime.asSeconds();
-	if (alpha <= 0.f)
-		alpha = 0.f;
+	if (isFadeOut == false)
+	{
+		if (alpha <= 240.f)
+			alpha -= fadeSpeedFinal * deltaTime.asSeconds();
+		else if (alpha > 240.f)
+			alpha -= fadeSpeedStart * deltaTime.asSeconds();
+		if (alpha <= 0.f)
+		{
+			alpha = 0.f;
+		}
+	}
 }
 
 void Transition::fadeOut(sf::Time deltaTime)
 {
-	if (alpha >= 10.f)
+	if (isFadeOut == true)
+	{
 		alpha += fadeSpeedFinal * deltaTime.asSeconds();
-	else
-		alpha += fadeSpeedStart * deltaTime.asSeconds();
-	if (alpha >= 255.f)
-		alpha = 255.f;
+		if (alpha >= 255.f)
+		{
+			if (currentscene == 0)
+			{
+				currentscene = TutorialScene;
+			}
+			else if (currentscene == 1)
+			{
+				currentscene = Level1Scene;
+			}
+			else if (currentscene == 2)
+			{
+				currentscene = Level2Scene;
+			}
+
+			isFadeOut = false;
+			alpha = 255.f;
+		}
+	}
 }
 
 void Transition::render(sf::RenderWindow& window)
