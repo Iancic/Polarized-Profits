@@ -2,13 +2,18 @@
 
 Button::Button(float sizeX, float sizeY, sf::Color boxcolor, sf::Color textcolor, int textsize)
 {
-	boxLenght = sizeX;
-	boxHeight = sizeY;
+	buttonLenght = sizeX;
+	buttonHeight = sizeY;
 
-	//Box
-	buttonBox.setPosition(pos.x, pos.y);
-	buttonBox.setSize(sf::Vector2f(sizeX, sizeY));
-	buttonBox.setFillColor(boxcolor);
+	//Sprite
+	buttonTexture = new sf::Texture;
+	hoverTexture = new sf::Texture;
+	buttonTexture->loadFromFile("Assets/Sprites/RedButton.png");
+	hoverTexture->loadFromFile("Assets/Sprites/BlueButton.png");
+
+	buttonSprite.setTexture(*buttonTexture);
+	buttonSprite.setScale(sf::Vector2f(sizeX, sizeY));
+	buttonSprite.setOrigin(buttonSprite.getTexture()->getSize().x / 2, buttonSprite.getTexture()->getSize().y / 2);
 
 	//Text
 	roboto.loadFromFile("Assets/Fonts/DiloWorld-mLJLv.ttf");
@@ -19,17 +24,24 @@ Button::Button(float sizeX, float sizeY, sf::Color boxcolor, sf::Color textcolor
 	text.setOutlineColor(sf::Color::Black);
 }
 
-void Button::update(std::string phrase)
+void Button::update(sf::RenderWindow& window, sf::Vector2i mousePosWindow, std::string phrase)
 {
+	if (buttonSprite.getGlobalBounds().contains(window.mapPixelToCoords(mousePosWindow)))
+	{
+		buttonSprite.setTexture(*hoverTexture);
+	}
+	else 
+		buttonSprite.setTexture(*buttonTexture);
+
 	text.setString(phrase);
 }
 
 void Button::render(sf::RenderWindow& window, float posX, float posY)
 {
-	buttonBox.setPosition(posX, posY);
-	window.draw(buttonBox);
+	buttonSprite.setPosition(posX, posY);
+	window.draw(buttonSprite);
 
 	//Align the Text In The Middle. Box Position + Box Lenght/Height divided by 2 = Middle of the Box + middle of the Text. 
-	text.setPosition(posX + boxLenght / 2 - text.getLocalBounds().width / 2, posY + boxHeight / 2 - text.getLocalBounds().height / 2);
+	text.setPosition(posX + buttonLenght / 2 - text.getLocalBounds().width / 2, posY + buttonHeight / 2 - text.getLocalBounds().height / 2);
 	window.draw(text);
 }

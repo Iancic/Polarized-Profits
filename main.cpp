@@ -11,7 +11,7 @@
 #include "Background.h"
 #include "Transition.h"
 
-void MainMenu(sf::RenderWindow& window, int windowHeight, int windowWidth, std::vector<int> toErase, std::vector<Coin>& coins, float& CurrentCoinSpawnR, float& coinSpawnR, TextUI& GameTitle1, TextUI& GameTitle2, TextUI& Author, TextUI& Breda, Button& Start, Button& Exit, int emptyText, Transition& transition, sf::Time deltaTime)
+void MainMenu(sf::RenderWindow& window, int windowHeight, int windowWidth, std::vector<int> toErase, std::vector<Coin>& coins, float& CurrentCoinSpawnR, float& coinSpawnR, TextUI& GameTitle1, TextUI& GameTitle2, TextUI& Author, TextUI& Breda, Button& Start, Button& Exit, int emptyText, Transition& transition, sf::Vector2i mousePosWindow, sf::Time deltaTime)
 {
     window.clear(sf::Color::White);
 
@@ -57,24 +57,24 @@ void MainMenu(sf::RenderWindow& window, int windowHeight, int windowWidth, std::
     Breda.render(window, windowWidth - 360.f, windowHeight - 50.f);
 
     //Buttons
-    Start.update("Start");
-    Start.render(window, windowWidth / 2 - 125.f, 320.f);
+    Start.update(window, mousePosWindow, "Start");
+    Start.render(window, windowWidth / 2, 320.f);
 
-    Exit.update("Exit");
-    Exit.render(window, windowWidth / 2 - 125.f, 420.f);
+    Exit.update(window, mousePosWindow, "Exit");
+    Exit.render(window, windowWidth / 2, 420.f);
 
     //Transition
     transition.fadeIn(deltaTime);
     transition.render(window);
 }
 
-void Tutorial(sf::RenderWindow& window, Button& Proceed, sf::Sprite& tutorialsprite, Transition& transition, sf::Time deltaTime)
+void Tutorial(sf::RenderWindow& window, Button& Proceed, sf::Sprite& tutorialsprite, Transition& transition, sf::Vector2i mousePosWindow, sf::Time deltaTime)
 {
     //Tutorial Background
     window.draw(tutorialsprite);
 
     //UI Updates
-    Proceed.update("Proceed");
+    Proceed.update(window, mousePosWindow, "Proceed");
     Proceed.render(window, 950.f, 600.f);
 
     //Transition
@@ -210,9 +210,9 @@ void Level1(sf::RenderWindow& window, int windowHeight, int windowWidth, std::ve
     transition.render(window);
 }
 
-void Level2(sf::RenderWindow& window, int windowHeight, int windowWidth, Magnet& wallet, TextUI Score, std::vector<int> toErase, std::vector<Coin>& coins, float dirLeft, float dirRight, float& CurrentCoinSpawnR, float& coinSpawnR, int& balance, int& finalBalance, int& coinCounter, Transition& transition, sf::Time deltaTime)
+void Level2(sf::RenderWindow& window, int windowHeight, int windowWidth, Magnet& wallet, sf::Sprite& background, TextUI Score, TextUI& Balance, std::vector<int> toErase, std::vector<Coin>& coins, float dirLeft, float dirRight, float& CurrentCoinSpawnR, float& coinSpawnR, int& balance, int& finalBalance, int& coinCounter, Transition& transition, bool hasStartedFall, bool& gameFinished, sf::Time deltaTime)
 {
-    window.clear(sf::Color::White);
+    window.draw(background);
 
     CurrentCoinSpawnR += deltaTime.asSeconds();
 
@@ -240,7 +240,7 @@ void Level2(sf::RenderWindow& window, int windowHeight, int windowWidth, Magnet&
         }
 
         //Erase coin if left the screen
-        if (coins[i].pos.y > windowHeight + 50.f)
+        if (coins[i].pos.y > windowHeight + 120.f)
         {
             toErase.push_back(i);
         }
@@ -249,6 +249,7 @@ void Level2(sf::RenderWindow& window, int windowHeight, int windowWidth, Magnet&
     for (int i = toErase.size() - 1; i >= 0; i--)
     {
         coins.erase(coins.begin() + toErase[i]);
+        hasStartedFall = true;
     }
 
     //Movement Restrictions For Player
@@ -263,8 +264,16 @@ void Level2(sf::RenderWindow& window, int windowHeight, int windowWidth, Magnet&
     wallet.render(window);
 
     //UI Updates
-    Score.update("Wallet", false, finalBalance);
-    Score.render(window, windowWidth / 2 - 55.f, windowHeight - 100.f);
+    Score.update("Out Of:", false, finalBalance);
+    Score.render(window, windowWidth / 2 - 100.f, windowHeight - 120.f);
+
+    Balance.update("Euro", false, balance);
+    Balance.render(window, windowWidth / 2 - 100.f, windowHeight - 50.f);
+
+    if (coins.size() == 0.f && hasStartedFall == true) //Check for avoiding running fade out at start.
+    {
+        gameFinished = true;
+    }
 
     //Transition
     transition.fadeIn(deltaTime);
@@ -297,10 +306,12 @@ int main()
 
     //Game Logic
     float dirLeft = 0.f, dirRight = 0.f, dirUp = 0.f, dirDown = 0.f; //Directions For Magnet Movement
+    bool gameFinished = false;
     std::vector<int> toErase;
    
     //Level 1
-    float maxRoundTime = 91.f; 
+    //float maxRoundTime = 61.f;
+    float maxRoundTime = 11.f;
     float currentRoundTime = maxRoundTime;
     float polarityPressed = false; //Check for Polarity Input
     int balance = 0; //Coin Balance During Level 1
@@ -309,19 +320,20 @@ int main()
     int finalBalance = 0; //Final Score
     int coinCounter = 0; //Final counter after collecting the coins
     int hitpoints = 3; //Hitpoints Level 2
+    bool hasStartedFall = false; //Check for Fade Out Level 2
 
     //Main Menu
     std::vector<Coin> mainMenuCoins;
     float coinSpawnRMenu = 0.15f; //Spawnrate For Coins Main Menu
 
-    TextUI GameTitle1(sf::Color::Red, 130);
-    TextUI GameTitle2(sf::Color::Blue, 140);
+    TextUI GameTitle1(sf::Color(199, 52, 52, 255), 130);
+    TextUI GameTitle2(sf::Color(61, 62, 210, 255), 140);
     TextUI Author(sf::Color::White, 22);
     TextUI Breda(sf::Color::White, 22);
 
-    Button Proceed(200.f, 80.f, sf::Color::Blue, sf::Color::White, 35);
-    Button Start(200.f, 80.f, sf::Color::Blue, sf::Color::White, 35);
-    Button Exit(200.f, 80.f, sf::Color::Red, sf::Color::White, 35);
+    Button Proceed(0.26f, 0.21f, sf::Color::Blue, sf::Color::White, 35);
+    Button Start(0.26f, 0.21f, sf::Color::Blue, sf::Color::White, 35);
+    Button Exit(0.26f, 0.21f, sf::Color::Red, sf::Color::White, 35);
 
     //Tutorial
     sf::Texture* tutorial;
@@ -331,10 +343,10 @@ int main()
     tutorial->loadFromFile("Assets/Sprites/Tutorial.png");
     tutorialsprite.setTexture(*tutorial);
 
-    //Level1 Objects
+    //Level1
     std::vector<Coin> coins;
 
-    float coinSpawnR1 = 0.7f; //Spawnrate For Coins Level 1
+    float coinSpawnR1 = 0.7f; //Spawnrate For Coins
     float CurrentCoinSpawnR = 0.f;
 
     Background background(0.f, 0.f);
@@ -347,12 +359,19 @@ int main()
     Hand leftHand(false, windowHeight, windowWidth);
     Hand rightHand(true, windowHeight, windowWidth);
 
-    //Level2 Objects
+    //Level2
+    sf::Texture* Level2Background;
+    sf::Sprite Level2BackgroundSprite;
+
+    Level2Background = new sf::Texture;
+    Level2Background->loadFromFile("Assets/Sprites/Level2Background.png");
+    Level2BackgroundSprite.setTexture(*Level2Background);
+
     TextUI Score(sf::Color::Yellow, 65);
     Magnet wallet(600, 550, 6.5f, true);
 
     std::vector<Coin> pigCoins;
-    float coinSpawnR2 = 0.8f; //Spawnrate For Coins Level 2
+    float coinSpawnR2 = 0.8f; //Spawnrate For Coins
 
 
     while (window.isOpen())
@@ -414,16 +433,16 @@ int main()
                 //UI Buttons Functionality
                 if (transition.currentscene == 0)
                 {
-                    if (Start.buttonBox.getGlobalBounds().contains(window.mapPixelToCoords(mousePosWindow)))
+                    if (Start.buttonSprite.getGlobalBounds().contains(window.mapPixelToCoords(mousePosWindow)))
                     {
                         transition.isFadeOut = true;
                     }
-                    if (Exit.buttonBox.getGlobalBounds().contains(window.mapPixelToCoords(mousePosWindow)))
+                    if (Exit.buttonSprite.getGlobalBounds().contains(window.mapPixelToCoords(mousePosWindow)))
                         window.close();
                 }
                 if (transition.currentscene == 1)
                 {
-                    if (Proceed.buttonBox.getGlobalBounds().contains(window.mapPixelToCoords(mousePosWindow)))
+                    if (Proceed.buttonSprite.getGlobalBounds().contains(window.mapPixelToCoords(mousePosWindow)))
                     {
                         transition.isFadeOut = true;
                     }
@@ -437,25 +456,43 @@ int main()
             currentRoundTime -= deltaTime.asSeconds();
             if (currentRoundTime <= 0.f)
             {
-                transition.isFadeOut = true;
+                if (balance > 0.f) //Go To Level 2
+                    transition.isFadeOut = true;
+
+                else //Lose Scenario On Level 1
+                    gameFinished = true;
             }
         }
 
-        transition.fadeOut(deltaTime);
+        //Finish Game Conditions
+        if (gameFinished == true)
+        {
+            if (transition.currentscene == 2)
+            {
+                transition.isFadeOut = true; //From Level 1 To Outro
+            }
+
+            if (transition.currentscene == 3)
+            {
+                transition.isFadeOut = true; //From Level 2 To Outro
+            }
+        }
 
         //Scene Manager 
+        transition.fadeOut(deltaTime);
+
         switch (transition.currentscene) {
             case 0:
-                MainMenu(window, windowHeight, windowWidth, toErase, mainMenuCoins, CurrentCoinSpawnR, coinSpawnRMenu, GameTitle1, GameTitle2, Author, Breda, Start, Exit, NULL, transition, deltaTime);
+                MainMenu(window, windowHeight, windowWidth, toErase, mainMenuCoins, CurrentCoinSpawnR, coinSpawnRMenu, GameTitle1, GameTitle2, Author, Breda, Start, Exit, NULL, transition, mousePosWindow, deltaTime);
                 break;
             case 1:
-                Tutorial(window, Proceed, tutorialsprite, transition, deltaTime);
+                Tutorial(window, Proceed, tutorialsprite, transition, mousePosWindow, deltaTime);
                 break;
             case 2:
                 Level1(window, windowHeight, windowWidth, toErase, background, transition, Balance, Timer, magnet, leftHand, rightHand, coins, pig, balance, dirLeft, dirUp, dirDown, dirRight, CurrentCoinSpawnR, coinSpawnR1, currentRoundTime, deltaTime);
                 break;
             case 3:
-                Level2(window, windowHeight, windowWidth, wallet, Score, toErase, pigCoins, dirLeft, dirRight, CurrentCoinSpawnR ,coinSpawnR2, balance, finalBalance, coinCounter, transition, deltaTime);
+                Level2(window, windowHeight, windowWidth, wallet, Level2BackgroundSprite, Score, Balance, toErase, pigCoins, dirLeft, dirRight, CurrentCoinSpawnR ,coinSpawnR2, balance, finalBalance, coinCounter, transition, hasStartedFall, gameFinished, deltaTime);
                 break;
             case 4:
                 Outro(window);
