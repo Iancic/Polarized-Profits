@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
 
 #include "Magnet.h"
 #include "Coin.h"
@@ -68,21 +69,21 @@ void MainMenu(sf::RenderWindow& window, int windowHeight, int windowWidth, std::
     transition.render(window);
 }
 
-void Tutorial(sf::RenderWindow& window, Button& Proceed, sf::Sprite& tutorialsprite, Transition& transition, sf::Vector2i mousePosWindow, sf::Time deltaTime)
+void Tutorial(sf::RenderWindow& window, int windowHeight, int windowWidth, Button& Proceed, sf::Sprite& tutorialsprite, Transition& transition, sf::Vector2i mousePosWindow, sf::Time deltaTime)
 {
     //Tutorial Background
     window.draw(tutorialsprite);
 
     //UI Updates
     Proceed.update(window, mousePosWindow, "Proceed");
-    Proceed.render(window, 950.f, 600.f);
+    Proceed.render(window, windowWidth / 2, 320.f);
 
     //Transition
     transition.fadeIn(deltaTime);
     transition.render(window);
 }
 
-void Level1(sf::RenderWindow& window, int windowHeight, int windowWidth, std::vector<int> toErase, Background background, Transition& transition, TextUI& Balance, TextUI& Timer, Magnet& magnet, Hand& leftHand, Hand& rightHand, std::vector<Coin>& coins, Pig& pig, int& balance, float dirLeft, float dirUp, float dirDown, float dirRight, float& CurrentCoinSpawnR, float& coinSpawnR, float currentRoundTime, sf::Time deltaTime)
+void Level1(sf::RenderWindow& window, int windowHeight, int windowWidth, std::vector<int> toErase, Background background, Transition& transition, TextUI& Balance, TextUI& Timer, Magnet& magnet, Hand& leftHand, Hand& rightHand, std::vector<Coin>& coins, Pig& pig, int& balance, float dirLeft, float dirUp, float dirDown, float dirRight, float& CurrentCoinSpawnR, float& coinSpawnR, float currentRoundTime, sf::Time deltaTime, sf::Sound& CoinInHandSound, sf::Sound& CoinCollectSound)
 {
     background.render(window);
 
@@ -124,6 +125,7 @@ void Level1(sf::RenderWindow& window, int windowHeight, int windowWidth, std::ve
         //Collision with Piggy Bank 
         if (coins[i].sprite.getGlobalBounds().intersects(pig.sprite.getGlobalBounds()))
         {
+            CoinCollectSound.play();
             balance = balance + coins[i].value;
             toErase.push_back(i);
         }
@@ -131,25 +133,26 @@ void Level1(sf::RenderWindow& window, int windowHeight, int windowWidth, std::ve
         //Collision with Magnet
         else if (coins[i].sprite.getGlobalBounds().intersects(magnet.magnetsprite.getGlobalBounds()))
         {
-            balance = balance - coins[i].value;
+            CoinInHandSound.play();
+            balance = balance - 1;
             toErase.push_back(i);
         }
 
         //Collision with Left Hand
-        else if (coins[i].sprite.getGlobalBounds().intersects(leftHand.sprite_hand.getGlobalBounds()))
+        else if (coins[i].sprite.getGlobalBounds().intersects(leftHand.sprite_hand.getGlobalBounds()) && leftHand.retracting == false)
         {
+            CoinInHandSound.play();
             leftHand.retracting = true;
-            balance = balance - 1;
-
+            balance = balance - coins[i].value;
             toErase.push_back(i);
         }
 
         //Collision with Right Hand
-        else if (coins[i].sprite.getGlobalBounds().intersects(rightHand.sprite_hand.getGlobalBounds()))
+        else if (coins[i].sprite.getGlobalBounds().intersects(rightHand.sprite_hand.getGlobalBounds()) && rightHand.retracting == false)
         {
+            CoinInHandSound.play();
             rightHand.retracting = true;
-            balance = balance - 1;
-
+            balance = balance - coins[i].value;
             toErase.push_back(i);
         }
 
@@ -210,7 +213,7 @@ void Level1(sf::RenderWindow& window, int windowHeight, int windowWidth, std::ve
     transition.render(window);
 }
 
-void Level2(sf::RenderWindow& window, int windowHeight, int windowWidth, Magnet& wallet, sf::Sprite& background, TextUI Score, TextUI& Balance, std::vector<int> toErase, std::vector<Coin>& coins, float dirLeft, float dirRight, float& CurrentCoinSpawnR, float& coinSpawnR, int& balance, int& finalBalance, int& coinCounter, Transition& transition, bool hasStartedFall, bool& gameFinished, sf::Time deltaTime)
+void Level2(sf::RenderWindow& window, int windowHeight, int windowWidth, Magnet& wallet, sf::Sprite& background, TextUI Score, TextUI& Balance, std::vector<int> toErase, std::vector<Coin>& coins, float dirLeft, float dirRight, float& CurrentCoinSpawnR, float& coinSpawnR, int& balance, int& finalBalance, int& coinCounter, Transition& transition, bool hasStartedFall, bool& gameFinished, sf::Time deltaTime, sf::Sound& CoinInHandSound, sf::Sound& CoinCollectSound)
 {
     window.draw(background);
 
@@ -220,7 +223,7 @@ void Level2(sf::RenderWindow& window, int windowHeight, int windowWidth, Magnet&
     {
         if (coinCounter < balance)
         {
-            coins.push_back(Coin(1, 1.5f, 1.f, windowWidth, windowHeight));
+            coins.push_back(Coin(1, 2.2f, 1.f, windowWidth, windowHeight));
             coinCounter = coinCounter + 1;
             CurrentCoinSpawnR = 0.f;
         }
@@ -235,6 +238,7 @@ void Level2(sf::RenderWindow& window, int windowHeight, int windowWidth, Magnet&
         //Collision with Wallet
         if (coins[i].sprite.getGlobalBounds().intersects(wallet.magnetsprite.getGlobalBounds()))
         {
+            CoinCollectSound.play();
             finalBalance += 1;
             toErase.push_back(i);
         }
@@ -242,6 +246,7 @@ void Level2(sf::RenderWindow& window, int windowHeight, int windowWidth, Magnet&
         //Erase coin if left the screen
         if (coins[i].pos.y > windowHeight + 120.f)
         {
+            CoinCollectSound.play();
             toErase.push_back(i);
         }
     }
@@ -287,22 +292,42 @@ void Outro(sf::RenderWindow& window)
 
 int main()
 {
+    //Window & General Game Settings
     int windowHeight = 720;
     int windowWidth = 1280;
-
     sf::RenderWindow window(sf::VideoMode(windowWidth, windowHeight), "Polarized Profits");
 
     sf::Image icon;
-    icon.loadFromFile("Assets/Sprites/Icon.png");
+    icon.loadFromFile("Assets/Sprites/UI/Icon.png");
     window.setIcon(icon.getSize().x, icon.getSize().y, icon.getPixelsPtr());
      
     window.setFramerateLimit(60);
     window.setVerticalSyncEnabled(false);
 
     sf::Vector2i mousePosWindow = sf::Mouse::getPosition(window);
-
     sf::Clock clock;
     sf::Time deltaTime;
+
+    //SFX
+    sf::SoundBuffer MenuSoundtrack;
+    MenuSoundtrack.loadFromFile("Assets/SFX/Soundtracks/MenuSoundtrack.wav");
+    sf::Sound MenuSoundtrackSound;
+    MenuSoundtrackSound.setBuffer(MenuSoundtrack);
+
+    sf::SoundBuffer ButtonPress;
+    ButtonPress.loadFromFile("Assets/SFX/Sounds/ButtonPress.wav");
+    sf::Sound ButtonPressSound;
+    ButtonPressSound.setBuffer(ButtonPress);
+
+    sf::SoundBuffer CoinCollect;
+    CoinCollect.loadFromFile("Assets/SFX/Sounds/CoinCollect.wav");
+    sf::Sound CoinCollectSound;
+    CoinCollectSound.setBuffer(CoinCollect);
+
+    sf::SoundBuffer CoinInHand;
+    CoinInHand.loadFromFile("Assets/SFX/Sounds/CoinInHand.wav");
+    sf::Sound CoinInHandSound;
+    CoinInHandSound.setBuffer(CoinInHand);
 
     //Game Logic
     float dirLeft = 0.f, dirRight = 0.f, dirUp = 0.f, dirDown = 0.f; //Directions For Magnet Movement
@@ -310,16 +335,14 @@ int main()
     std::vector<int> toErase;
    
     //Level 1
-    //float maxRoundTime = 61.f;
-    float maxRoundTime = 11.f;
+    float maxRoundTime = 61.f;
     float currentRoundTime = maxRoundTime;
-    float polarityPressed = false; //Check for Polarity Input
-    int balance = 0; //Coin Balance During Level 1
+    float polarityPressed = false;
+    int balance = 0;
 
     //Level 2
-    int finalBalance = 0; //Final Score
-    int coinCounter = 0; //Final counter after collecting the coins
-    int hitpoints = 3; //Hitpoints Level 2
+    int finalBalance = 0;
+    int coinCounter = 0;
     bool hasStartedFall = false; //Check for Fade Out Level 2
 
     //Main Menu
@@ -340,13 +363,13 @@ int main()
     sf::Sprite tutorialsprite;
 
     tutorial = new sf::Texture;
-    tutorial->loadFromFile("Assets/Sprites/Tutorial.png");
+    tutorial->loadFromFile("Assets/Sprites/Backgrounds/Tutorial.png");
     tutorialsprite.setTexture(*tutorial);
 
     //Level1
     std::vector<Coin> coins;
 
-    float coinSpawnR1 = 0.7f; //Spawnrate For Coins
+    float coinSpawnR1 = 0.6f; //Spawnrate For Coins
     float CurrentCoinSpawnR = 0.f;
 
     Background background(0.f, 0.f);
@@ -364,11 +387,11 @@ int main()
     sf::Sprite Level2BackgroundSprite;
 
     Level2Background = new sf::Texture;
-    Level2Background->loadFromFile("Assets/Sprites/Level2Background.png");
+    Level2Background->loadFromFile("Assets/Sprites/Backgrounds/Level2Background.png");
     Level2BackgroundSprite.setTexture(*Level2Background);
 
     TextUI Score(sf::Color::Yellow, 65);
-    Magnet wallet(600, 550, 6.5f, true);
+    Magnet wallet(600, 550, 8.f, true);
 
     std::vector<Coin> pigCoins;
     float coinSpawnR2 = 0.8f; //Spawnrate For Coins
@@ -435,15 +458,22 @@ int main()
                 {
                     if (Start.buttonSprite.getGlobalBounds().contains(window.mapPixelToCoords(mousePosWindow)))
                     {
+                        ButtonPressSound.play();
                         transition.isFadeOut = true;
                     }
+
                     if (Exit.buttonSprite.getGlobalBounds().contains(window.mapPixelToCoords(mousePosWindow)))
+                    {
+                        ButtonPressSound.play();
                         window.close();
+                    }
                 }
-                if (transition.currentscene == 1)
+
+                else if (transition.currentscene == 1)
                 {
                     if (Proceed.buttonSprite.getGlobalBounds().contains(window.mapPixelToCoords(mousePosWindow)))
                     {
+                        ButtonPressSound.play();
                         transition.isFadeOut = true;
                     }
                 }
@@ -468,14 +498,10 @@ int main()
         if (gameFinished == true)
         {
             if (transition.currentscene == 2)
-            {
                 transition.isFadeOut = true; //From Level 1 To Outro
-            }
 
-            if (transition.currentscene == 3)
-            {
+            else if (transition.currentscene == 3)
                 transition.isFadeOut = true; //From Level 2 To Outro
-            }
         }
 
         //Scene Manager 
@@ -486,13 +512,13 @@ int main()
                 MainMenu(window, windowHeight, windowWidth, toErase, mainMenuCoins, CurrentCoinSpawnR, coinSpawnRMenu, GameTitle1, GameTitle2, Author, Breda, Start, Exit, NULL, transition, mousePosWindow, deltaTime);
                 break;
             case 1:
-                Tutorial(window, Proceed, tutorialsprite, transition, mousePosWindow, deltaTime);
+                Tutorial(window, windowHeight, windowWidth, Proceed, tutorialsprite, transition, mousePosWindow, deltaTime);
                 break;
             case 2:
-                Level1(window, windowHeight, windowWidth, toErase, background, transition, Balance, Timer, magnet, leftHand, rightHand, coins, pig, balance, dirLeft, dirUp, dirDown, dirRight, CurrentCoinSpawnR, coinSpawnR1, currentRoundTime, deltaTime);
+                Level1(window, windowHeight, windowWidth, toErase, background, transition, Balance, Timer, magnet, leftHand, rightHand, coins, pig, balance, dirLeft, dirUp, dirDown, dirRight, CurrentCoinSpawnR, coinSpawnR1, currentRoundTime, deltaTime, CoinInHandSound, CoinCollectSound);
                 break;
             case 3:
-                Level2(window, windowHeight, windowWidth, wallet, Level2BackgroundSprite, Score, Balance, toErase, pigCoins, dirLeft, dirRight, CurrentCoinSpawnR ,coinSpawnR2, balance, finalBalance, coinCounter, transition, hasStartedFall, gameFinished, deltaTime);
+                Level2(window, windowHeight, windowWidth, wallet, Level2BackgroundSprite, Score, Balance, toErase, pigCoins, dirLeft, dirRight, CurrentCoinSpawnR ,coinSpawnR2, balance, finalBalance, coinCounter, transition, hasStartedFall, gameFinished, deltaTime, CoinInHandSound, CoinCollectSound);
                 break;
             case 4:
                 Outro(window);

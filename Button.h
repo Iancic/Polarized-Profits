@@ -20,6 +20,12 @@ public:
 
 	Button(float sizeX, float sizeY, sf::Color boxcolor, sf::Color textcolor, int textsize);
 
+	void initTexture();
+
+	void initSprite(float sizeX, float sizeY);
+
+	void initText(sf::Color textcolor, int textsize);
+
 	void update(sf::RenderWindow& window, sf::Vector2i mousePosWindow, std::string phrase);
 
 	void render(sf::RenderWindow& window, float posX, float posY);

@@ -12,10 +12,10 @@ Background::Background(float pos_x, float pos_y)
 void Background::initTexture()
 {
 	backgroundBlue = new sf::Texture;
-	backgroundBlue->loadFromFile("Assets/Sprites/BlueBackground.png");
+	backgroundBlue->loadFromFile("Assets/Sprites/Backgrounds/BlueBackground.png");
 
 	backgroundRed = new sf::Texture;
-	backgroundRed->loadFromFile("Assets/Sprites/RedBackground.png");
+	backgroundRed->loadFromFile("Assets/Sprites/Backgrounds/RedBackground.png");
 }
 
 void Background::initSprite()

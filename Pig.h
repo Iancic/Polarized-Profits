@@ -15,7 +15,7 @@ public:
 
 	float maxTime = 7.f, timer = 0.f;
 
-	float scale = 0.27f;
+	float scale = 0.25f;
 
 	Pig(float pos_x, float pos_y);
 

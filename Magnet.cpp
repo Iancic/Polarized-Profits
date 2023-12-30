@@ -15,13 +15,13 @@ Magnet::Magnet(float pos_x, float pos_y, float moveSpeed, bool isWallet)
 void Magnet::initTexture()
 {
 		wallettexture = new sf::Texture;
-		wallettexture->loadFromFile("Assets/Sprites/Wallet.png");
+		wallettexture->loadFromFile("Assets/Sprites/Entities/Wallet.png");
 
 		magnettextureBlue = new sf::Texture;
-		magnettextureBlue->loadFromFile("Assets/Sprites/BlueMagnet.png");
+		magnettextureBlue->loadFromFile("Assets/Sprites/Entities/BlueMagnet.png");
 
 		magnettextureRed = new sf::Texture;
-		magnettextureRed->loadFromFile("Assets/Sprites/RedMagnet.png");
+		magnettextureRed->loadFromFile("Assets/Sprites/Entities/RedMagnet.png");
 }
 
 void Magnet::initSprite()
@@ -30,7 +30,7 @@ void Magnet::initSprite()
 	if (wallet == true)
 	{
 		magnetsprite.setTexture(*wallettexture);
-		magnetsprite.setScale(scale, scale);
+		magnetsprite.setScale(walletScale, walletScale);
 		magnetsprite.setOrigin(magnetsprite.getTexture()->getSize().x / 2, magnetsprite.getTexture()->getSize().y / 2);
 	}
 

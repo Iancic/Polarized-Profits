@@ -27,25 +27,25 @@ void Hand::initTexture()
 
 	if (hand_type)
 	{
-		inTexture1->loadFromFile("Assets/Sprites/in_01d.png");
-		inTexture2->loadFromFile("Assets/Sprites/in_02d.png");
-		inTexture3->loadFromFile("Assets/Sprites/in_03d.png");
+		inTexture1->loadFromFile("Assets/Sprites/Hands/in_01d.png");
+		inTexture2->loadFromFile("Assets/Sprites/Hands/in_02d.png");
+		inTexture3->loadFromFile("Assets/Sprites/Hands/in_03d.png");
 	}
 	else
 	{
-		inTexture1->loadFromFile("Assets/Sprites/in_01s.png");
-		inTexture2->loadFromFile("Assets/Sprites/in_02s.png");
-		inTexture3->loadFromFile("Assets/Sprites/in_03s.png");
+		inTexture1->loadFromFile("Assets/Sprites/Hands/in_01s.png");
+		inTexture2->loadFromFile("Assets/Sprites/Hands/in_02s.png");
+		inTexture3->loadFromFile("Assets/Sprites/Hands/in_03s.png");
 	}
 
 	outTexture = new sf::Texture;
 	if (hand_type)
 	{
-		outTexture->loadFromFile("Assets/Sprites/out_01d.png");
+		outTexture->loadFromFile("Assets/Sprites/Hands/out_01d.png");
 	}
 	else
 	{
-		outTexture->loadFromFile("Assets/Sprites/out_01s.png");
+		outTexture->loadFromFile("Assets/Sprites/Hands/out_01s.png");
 	}
 }
 
@@ -102,9 +102,9 @@ void Hand::retractHand()
 	sprite_hand.setTexture(*outTexture);
 
 	if (hand_type == false)
-		pos.x -= moveSpeed;
+		pos.x -= retractSpeed;
 	else if (hand_type == true)
-		pos.x += moveSpeed;
+		pos.x += retractSpeed;
 
 	if (hand_type == false && pos.x < -50.f)
 		retracting = false;

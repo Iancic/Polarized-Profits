@@ -23,12 +23,12 @@ public:
 	bool changeTexture = true;
 
 	int timer = 0.1f;
-	int maxTime = 60.f; //Lifetime of hand
 	int moveSpeed = 1.f;
+	int retractSpeed = 3.f;
 	int randomCoinPos;
 
 	float distance_x, distance_y;
-	float scale = 0.28f;
+	float scale = 0.25f;
 
 	Hand(bool type, int windowHeight, int windowWidth);
 

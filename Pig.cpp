@@ -12,7 +12,7 @@ Pig::Pig(float pos_x, float pos_y)
 void Pig::initTexture()
 {
 	pigtexture = new sf::Texture;
-	pigtexture->loadFromFile("Assets/Sprites/Pig.png");
+	pigtexture->loadFromFile("Assets/Sprites/Entities/Pig.png");
 }
 
 void Pig::initSprite()

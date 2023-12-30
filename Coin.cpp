@@ -15,16 +15,16 @@ Coin::Coin(int type, float vel_x, float vel_y, int windowWidth, int windowHeight
 void Coin::initTexture()
 {
 	blurredCoin = new sf::Texture;
-	blurredCoin->loadFromFile("Assets/Sprites/SilverCoin.png");
+	blurredCoin->loadFromFile("Assets/Sprites/Coins/SilverCoin.png");
 
 	coinCopper = new sf::Texture;
-	coinCopper->loadFromFile("Assets/Sprites/CopperCoin.png");
+	coinCopper->loadFromFile("Assets/Sprites/Coins/CopperCoin.png");
 
 	coinSilver = new sf::Texture;
-	coinSilver->loadFromFile("Assets/Sprites/SilverCoin.png");
+	coinSilver->loadFromFile("Assets/Sprites/Coins/SilverCoin.png");
 
 	coinGold = new sf::Texture;
-	coinGold->loadFromFile("Assets/Sprites/GoldCoin.png");
+	coinGold->loadFromFile("Assets/Sprites/Coins/GoldCoin.png");
 }
 
 void Coin::initSprite()
@@ -118,7 +118,7 @@ void Coin::update_physics(Magnet& s)
 		//-velocity when in denial polarity
 		else if (s.get_state() == false)
 		{
-			pos.y -= vel.y * 2.f;
+			pos.y -= vel.y * 3.f;
 			vel.x = 0;
 			vel.y = 0;
 		}
