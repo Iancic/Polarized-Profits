@@ -56,6 +56,10 @@ void Transition::fadeOut(sf::Time deltaTime)
 			{
 				currentscene = OutroScene;
 			}
+			else if (currentscene == 4)
+			{
+				currentscene = Level1Scene;
+			}
 
 			isFadeOut = false;
 			alpha = 255.f;

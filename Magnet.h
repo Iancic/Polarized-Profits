@@ -31,6 +31,8 @@ public:
 
 	void render(sf::RenderWindow& window);
 
+	void placePos(float posX, float posY);
+
 	void changePos(float dirRight, float dirLeft, float dirDown, float dirUp);
 
 	void changeHorizontal(float dirRight, float dirLeft);

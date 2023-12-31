@@ -22,6 +22,14 @@ void Pig::initSprite()
 	sprite.setOrigin(sprite.getTexture()->getSize().x / 2, sprite.getTexture()->getSize().y * 0.5f / 2);
 }
 
+void Pig::placePos(float posX, float posY)
+{
+	pos.x = posX;
+	pos.y = posY;
+
+	sprite.setPosition(pos);
+}
+
 void Pig::changePos(sf::RenderWindow& window, sf::Time counter)
 {
 	if (timer >= maxTime)

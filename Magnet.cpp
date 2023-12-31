@@ -58,6 +58,15 @@ void Magnet::render(sf::RenderWindow& window)
 	window.draw(magnetsprite);
 }
 
+void Magnet::placePos(float posX, float posY)
+{
+	pos.x = posX;
+	pos.y = posY;
+
+	magnetsprite.setPosition(pos);
+	radiusEffect.setPosition(pos);
+}
+
 void Magnet::changePos(float dirRight, float dirLeft, float dirDown, float dirUp)
 {
 	pos.x += dirRight * magnetSpeed;

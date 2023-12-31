@@ -85,7 +85,6 @@ void::Coin::spawnCoin(int windowWidth, int windowHeight)
 
 }
 
-//Movement Interaction With The Magnet
 void Coin::update_physics(Magnet& s)
 {
 	//Lenght between Magnet and Coin on X and Y.
@@ -135,7 +134,7 @@ void Coin::update_physics(Magnet& s)
 void Coin::fall_physics()
 {
 	vel.y += fallSpeed;
-	pos.y += vel.y * 1.4f;
+	pos.y += vel.y * 2.f;
 }
 
 sf::Vector2f Coin::get_pos()

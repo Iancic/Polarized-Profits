@@ -60,6 +60,22 @@ void Hand::initSprite()
 		sprite_hand.setOrigin(sprite_hand.getTexture()->getSize().x, sprite_hand.getTexture()->getSize().y / 2);
 }
 
+void Hand::magnetPhysics(Magnet& s)
+{
+	float distance_x = s.get_pos().x - pos.x;
+
+	if (distance_x < 500.f)
+	{
+		if (s.get_state() == false)
+		{
+			if (hand_type)
+				pos.x += retractSpeed;
+			else 
+				pos.x -= retractSpeed;
+		}
+	}
+}
+
 void Hand::moveHand(std::vector<Coin>& coins)
 {
 	if (changeTexture == true)

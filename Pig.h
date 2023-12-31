@@ -23,6 +23,8 @@ public:
 
 	void initSprite();
 
+	void placePos(float posX, float posY);
+
 	void changePos(sf::RenderWindow& window, sf::Time counter);
 
 	void render(sf::RenderWindow& window);

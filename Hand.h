@@ -24,7 +24,7 @@ public:
 
 	int timer = 0.1f;
 	int moveSpeed = 1.f;
-	int retractSpeed = 3.f;
+	int retractSpeed = 4.f;
 	int randomCoinPos;
 
 	float distance_x, distance_y;
@@ -35,6 +35,8 @@ public:
 	void initTexture();
 
 	void initSprite();
+
+	void magnetPhysics(Magnet& s);
 
 	void moveHand(std::vector<Coin>& coins);
 
