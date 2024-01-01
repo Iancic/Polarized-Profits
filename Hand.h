@@ -24,7 +24,7 @@ public:
 
 	int timer = 0.1f;
 	int moveSpeed = 2.f;
-	int retractSpeed = 4.f;
+	int retractSpeed = 3.f;
 	int randomCoinPos;
 
 	float distance_x, distance_y;

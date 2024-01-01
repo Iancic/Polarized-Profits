@@ -22,8 +22,28 @@ void MainMenu(sf::RenderWindow& window, int windowHeight, int windowWidth, std::
     //Spawn Coins
     if (CurrentCoinSpawnR >= coinSpawnR)
     {
-        coins.push_back(Coin(0, 1.5f, 1.f, windowWidth, windowHeight));
-        CurrentCoinSpawnR = 0.f;
+        int probability = 1 + (rand() % 10);
+
+        //Spawn Copper Coins (60%)
+        if (probability <= 6)
+        {
+            coins.push_back(Coin(1, 1.5f, 1.f, windowWidth, windowHeight));
+            CurrentCoinSpawnR = 0.f;
+        }
+
+        //Spawn Silver Coins (30%)
+        else if (probability == 7 || probability == 8 || probability == 9)
+        {
+            coins.push_back(Coin(2, 1.5f, 1.f, windowWidth, windowHeight));
+            CurrentCoinSpawnR = 0.f;
+        }
+
+        //Spawn Gold Coins (10%)
+        else if (probability == 10)
+        {
+            coins.push_back(Coin(3, 1.5f, 1.f, windowWidth, windowHeight));
+            CurrentCoinSpawnR = 0.f;
+        }
     }
 
     //Coin Updates
@@ -55,7 +75,7 @@ void MainMenu(sf::RenderWindow& window, int windowHeight, int windowWidth, std::
     Author.update("Made by Iancic David", true, NULL);
     Author.render(window, windowWidth - 360.f, windowHeight - 70.f);
 
-    Breda.update("BUAS CMGT PR Intake 2023", true, NULL);
+    Breda.update("BUAS CMGT PR Intake 2024", true, NULL);
     Breda.render(window, windowWidth - 360.f, windowHeight - 50.f);
 
     //Buttons
@@ -150,14 +170,6 @@ void Level1(sf::RenderWindow& window, int windowHeight, int windowWidth, std::ve
             toErase.push_back(i);
         }
 
-        //Collision with Magnet
-        else if (coins[i].sprite.getGlobalBounds().intersects(magnet.magnetsprite.getGlobalBounds()))
-        {
-            CoinInHandSound.play();
-            balance = balance - 1;
-            toErase.push_back(i);
-        }
-
         //Collision with Left Hand
         else if (coins[i].sprite.getGlobalBounds().intersects(leftHand.sprite_hand.getGlobalBounds()) && leftHand.retracting == false)
         {
@@ -213,20 +225,28 @@ void Level1(sf::RenderWindow& window, int windowHeight, int windowWidth, std::ve
 
     //Left Hand Updates
     if (leftHand.retracting == false)
-        leftHand.moveHand(coins);
+    {
+        if (magnet.get_state() == false)
+            leftHand.magnetPhysics(magnet);
+        else
+            leftHand.moveHand(coins);
+    }
     else
         leftHand.retractHand();
 
-    leftHand.magnetPhysics(magnet);
     leftHand.render(window);
 
     //Right Hand Updates
     if (rightHand.retracting == false)
-        rightHand.moveHand(coins);
+    {
+        if (magnet.get_state() == false)
+            rightHand.magnetPhysics(magnet);
+        else
+            rightHand.moveHand(coins);
+    }
     else 
         rightHand.retractHand();
 
-    rightHand.magnetPhysics(magnet);
     rightHand.render(window);
 
     //Text UI
@@ -345,7 +365,8 @@ int main()
     //Window & Game Settings
     int windowHeight = 720;
     int windowWidth = 1280;
-    sf::RenderWindow window(sf::VideoMode(windowWidth, windowHeight), "Polarized Profits");
+    sf::VideoMode mode(windowWidth, windowHeight);
+    sf::RenderWindow window(mode, "Polarized Profits");
 
     sf::Image icon;
     icon.loadFromFile("Assets/Sprites/UI/Icon.png");
@@ -430,7 +451,7 @@ int main()
     //Level 1 Game Objects
     std::vector<Coin> coins;
 
-    float coinSpawnR1 = 0.6f;
+    float coinSpawnR1 = 0.7f;
     float CurrentCoinSpawnR = 0.f;
 
     Background background(0.f, 0.f);
@@ -462,7 +483,7 @@ int main()
     Level2BackgroundSprite.setTexture(*Level2Background);
 
     TextUI Score(sf::Color::Yellow, 65);
-    Magnet wallet(600, 550, 8.f, true);
+    Magnet wallet(600, 550, 10.f, true);
 
     std::vector<Coin> pigCoins;
 

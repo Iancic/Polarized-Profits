@@ -57,27 +57,16 @@ void Coin::render(sf::RenderWindow& window)
 void::Coin::spawnCoin(int windowWidth, int windowHeight)
 {
 	//Coin Spawn Based On Box Offset
-	if (coinType != 0)
-	{
-		float boundsScale = 0.15f;
+	float boundsScale = 0.18f;
 
-		float minMargin = 0.f + boundsScale;
-		float maxMargin = 1.f - boundsScale;
+	float minMargin = 0.f + boundsScale;
+	float maxMargin = 1.f - boundsScale;
 
-		float offsetX = windowWidth * minMargin;
-		float rangeX = windowWidth * maxMargin;
+	float offsetX = windowWidth * minMargin;
+	float rangeX = windowWidth * maxMargin;
 
-		pos.x = offsetX + static_cast<float>(rand() % static_cast<int>(rangeX - offsetX));
-		pos.y = -200.f;
-	}
-
-	//Main Menu Coin Spawn
-	else
-	{
-		pos.x = static_cast<float>(rand() % windowWidth);
-		pos.y = 0.f;
-	}
-
+	pos.x = offsetX + static_cast<float>(rand() % static_cast<int>(rangeX - offsetX));
+	pos.y = -200.f;
 }
 
 void Coin::updatePhysics(Magnet& s)
@@ -87,7 +76,7 @@ void Coin::updatePhysics(Magnet& s)
 	float distance_y = s.get_pos().y - pos.y;
 	float distance = sqrt(distance_x * distance_x + distance_y * distance_y);
 
-	if (distance < 330.f)
+	if (distance < 300.f)
 	{
 		//Divide each component (triangle lenght) by the distance inverse (normalization).
 
@@ -110,7 +99,7 @@ void Coin::updatePhysics(Magnet& s)
 		//-velocity when in denial polarity
 		else if (s.get_state() == false)
 		{
-			pos.y -= vel.y * 3.f;
+			pos.y -= vel.y * 1.5f;
 			vel.x = 0;
 			vel.y = 0;
 		}

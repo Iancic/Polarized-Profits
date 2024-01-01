@@ -1,22 +1,16 @@
-----------Polarized Profits--------
-Made by Iancic David for the BUas intake.
+Polarized Profits is a game made by DAVID IANCIC for the BUAS CMGT PR 2024 Intake using C++ and SFML.
 Run the executable file (.exe).
 
 https://github.com/Iancic/Polarized-Profits
+https://iancic.itch.io/polarized-profits
 
-----------Tutorial Level 1---------
+You must use your magnet during the coin storm to collect as much money into the piggy bank. Watch out for the thief hands, they can only be denied using the blue magnet. At last break the piggy bank and collect all the coins in your wallet. How much profit can you polarize?
+
 How To Play:
-W, A, S, D - Move The Magnet
-Spacebar - Change Polarity (Red Attracts Coins, Blue Deflects Coins)
+W, A, S, D - Move The Magnet / Wallet
+Spacebar - Change Polarity (Red Attracts Coins, Blue Deflects Coins & Hands)
 
 Rules: 
-You have 90 seconds to collect the coins into the piggy bank.
-Avoid getting to close to the magnet. You can break your coins if not careful.
-Avoid the thief hands. They wanna steal your coins.
-
-----------Tutorial Level 2---------
-How To Play:
-A,D - Move The Hands Left And Right
-
-Rules:
-Break the piggy bank and try to catch as many coins as possible.
+You have 60 seconds to collect the coins into the piggy bank.
+Avoid the thief hands using the blue magnet. They wanna steal your coins.
+Confirm your profits using the wallet. 

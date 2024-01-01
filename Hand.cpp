@@ -64,14 +64,14 @@ void Hand::magnetPhysics(Magnet& s)
 {
 	float distance_x = s.get_pos().x - pos.x;
 
-	if (distance_x < 500.f)
+	if (abs(distance_x) < 800.f)
 	{
 		if (s.get_state() == false)
 		{
 			if (hand_type)
-				pos.x += retractSpeed;
+				pos.x += retractSpeed * 1.5f;
 			else 
-				pos.x -= retractSpeed;
+				pos.x -= retractSpeed * 1.5f;
 		}
 	}
 }
