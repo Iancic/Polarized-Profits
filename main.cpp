@@ -12,14 +12,9 @@
 #include "Background.h"
 #include "Transition.h"
 
-void MainMenu(sf::RenderWindow& window, int windowHeight, int windowWidth, std::vector<int> toErase, std::vector<Coin>& coins, float& CurrentCoinSpawnR, float& coinSpawnR, TextUI& GameTitle1, TextUI& GameTitle2, TextUI& Author, TextUI& Breda, Button& Start, Button& Exit, int emptyText, Transition& transition, sf::Vector2i mousePosWindow, sf::Sound& Soundtrack, bool& startSong, sf::Time deltaTime)
+void MainMenu(sf::RenderWindow& window, int windowHeight, int windowWidth, std::vector<int> toErase, std::vector<Coin>& coins, float& CurrentCoinSpawnR, float& coinSpawnR, TextUI& GameTitle1, TextUI& GameTitle2, TextUI& Author, TextUI& Breda, Button& Start, Button& Exit, int emptyText, Transition& transition, sf::Vector2i mousePosWindow, sf::Time deltaTime)
 {
-    if (startSong == false)
-    {
-        startSong = true;
-        Soundtrack.play();
-    }
-
+    //Background
     window.clear(sf::Color::White);
 
     CurrentCoinSpawnR += deltaTime.asSeconds();
@@ -34,7 +29,7 @@ void MainMenu(sf::RenderWindow& window, int windowHeight, int windowWidth, std::
     //Coin Updates
     for (int i = 0; i < coins.size(); i++)
     {
-        coins[i].fall_physics();
+        coins[i].fallPhysics();
         coins[i].render(window);
 
         //Erase coin if left the screen
@@ -44,13 +39,13 @@ void MainMenu(sf::RenderWindow& window, int windowHeight, int windowWidth, std::
         }
     }
 
+    //Coin Destroyer
     for (int i = toErase.size() - 1; i >= 0; i--)
     {
         coins.erase(coins.begin() + toErase[i]);
     }
 
-    //UI Updates
-    //Game Title
+    //Text UI
     GameTitle1.update("Polarized", true, NULL);
     GameTitle1.render(window, windowWidth / 2 - 450.f, 30.f);
 
@@ -77,10 +72,10 @@ void MainMenu(sf::RenderWindow& window, int windowHeight, int windowWidth, std::
 
 void Tutorial(sf::RenderWindow& window, int windowHeight, int windowWidth, Button& Proceed, sf::Sprite& tutorialsprite, Transition& transition, sf::Vector2i mousePosWindow, sf::Time deltaTime)
 {
-    //Tutorial Background
+    //Background
     window.draw(tutorialsprite);
 
-    //UI Updates
+    //Buttons
     Proceed.update(window, mousePosWindow, "Proceed");
     Proceed.render(window, windowWidth / 2, 320.f);
 
@@ -91,11 +86,10 @@ void Tutorial(sf::RenderWindow& window, int windowHeight, int windowWidth, Butto
 
 void Level1(sf::RenderWindow& window, int windowHeight, int windowWidth, std::vector<int> toErase, Background background, Transition& transition, TextUI& Balance, TextUI& Timer, Magnet& magnet, Hand& leftHand, Hand& rightHand, std::vector<Coin>& coins, Pig& pig, int& balance, float dirLeft, float dirUp, float dirDown, float dirRight, float& CurrentCoinSpawnR, float& coinSpawnR, float currentRoundTime, sf::Time deltaTime, bool& reload, sf::Sound& CoinInHandSound, sf::Sound& CoinCollectSound)
 {
+    //Background
     background.render(window);
 
-    CurrentCoinSpawnR += deltaTime.asSeconds();
-
-    //Reset Game After Restart Button
+    //Reset Game After Restart
     if (reload == true)
     {
         for (int i = 0; i < coins.size(); i++)
@@ -105,8 +99,6 @@ void Level1(sf::RenderWindow& window, int windowHeight, int windowWidth, std::ve
 
         //Reset Game Logic
         balance = 0.f;
-
-        //Reset Entities Positions
         rightHand.retracting = true;
         leftHand.retracting = true;
         magnet.placePos(600.f, 500.f);
@@ -114,6 +106,8 @@ void Level1(sf::RenderWindow& window, int windowHeight, int windowWidth, std::ve
 
         reload = false;
     }
+
+    CurrentCoinSpawnR += deltaTime.asSeconds();
 
     //Spawn Coins
     if (CurrentCoinSpawnR >= coinSpawnR)
@@ -142,64 +136,61 @@ void Level1(sf::RenderWindow& window, int windowHeight, int windowWidth, std::ve
         }
     }
 
-    if (!coins.empty())
+    //Coin Updates
+    for (int i = 0; i < coins.size(); i++)
     {
-        //Coin Updates
-        for (int i = 0; i < coins.size(); i++)
+        coins[i].updatePhysics(magnet);
+        coins[i].render(window);
+
+        //Collision with Piggy Bank 
+        if (coins[i].sprite.getGlobalBounds().intersects(pig.sprite.getGlobalBounds()))
         {
-            coins[i].update_physics(magnet);
-            coins[i].render(window);
+            CoinCollectSound.play();
+            balance = balance + coins[i].value;
+            toErase.push_back(i);
+        }
 
-            //Collision with Piggy Bank 
-            if (coins[i].sprite.getGlobalBounds().intersects(pig.sprite.getGlobalBounds()))
-            {
-                CoinCollectSound.play();
-                balance = balance + coins[i].value;
-                toErase.push_back(i);
-            }
+        //Collision with Magnet
+        else if (coins[i].sprite.getGlobalBounds().intersects(magnet.magnetsprite.getGlobalBounds()))
+        {
+            CoinInHandSound.play();
+            balance = balance - 1;
+            toErase.push_back(i);
+        }
 
-            //Collision with Magnet
-            else if (coins[i].sprite.getGlobalBounds().intersects(magnet.magnetsprite.getGlobalBounds()))
-            {
-                CoinInHandSound.play();
-                balance = balance - 1;
-                toErase.push_back(i);
-            }
+        //Collision with Left Hand
+        else if (coins[i].sprite.getGlobalBounds().intersects(leftHand.sprite_hand.getGlobalBounds()) && leftHand.retracting == false)
+        {
+            CoinInHandSound.play();
+            leftHand.retracting = true;
+            balance = balance - coins[i].value;
+            toErase.push_back(i);
+        }
 
-            //Collision with Left Hand
-            else if (coins[i].sprite.getGlobalBounds().intersects(leftHand.sprite_hand.getGlobalBounds()) && leftHand.retracting == false)
-            {
-                CoinInHandSound.play();
-                leftHand.retracting = true;
-                balance = balance - coins[i].value;
-                toErase.push_back(i);
-            }
+        //Collision with Right Hand
+        else if (coins[i].sprite.getGlobalBounds().intersects(rightHand.sprite_hand.getGlobalBounds()) && rightHand.retracting == false)
+        {
+            CoinInHandSound.play();
+            rightHand.retracting = true;
+            balance = balance - coins[i].value;
+            toErase.push_back(i);
+        }
 
-            //Collision with Right Hand
-            else if (coins[i].sprite.getGlobalBounds().intersects(rightHand.sprite_hand.getGlobalBounds()) && rightHand.retracting == false)
-            {
-                CoinInHandSound.play();
-                rightHand.retracting = true;
-                balance = balance - coins[i].value;
-                toErase.push_back(i);
-            }
-
-            //Erase coin if left the screen
-            if (coins[i].pos.y > windowHeight + 50.f)
-            {
-                balance = balance - coins[i].value;
-                toErase.push_back(i);
-            }
+        //Erase coin if left the screen
+        if (coins[i].pos.y > windowHeight + 50.f)
+        {
+            balance = balance - coins[i].value;
+            toErase.push_back(i);
         }
     }
 
+    //Coin Destroyer
     for (int i = toErase.size() - 1; i >= 0; i--)
     {
         coins.erase(coins.begin() + toErase[i]);
     }
 
-
-    //Movement Restrictions For Player
+    //Movement Restrictions For Magnet
     if (magnet.get_pos().x <= 0.f + magnet.magnetsprite.getTexture()->getSize().x / 2 * magnet.scale)
         dirLeft = 0.f;
 
@@ -212,28 +203,33 @@ void Level1(sf::RenderWindow& window, int windowHeight, int windowWidth, std::ve
     if (magnet.get_pos().y >= windowHeight - magnet.magnetsprite.getTexture()->getSize().y / 2 * magnet.scale)
         dirDown = 0.f;
 
-    //Objects Updates
+    //Magnet Updates
     magnet.changePos(dirRight, dirLeft, dirDown, dirUp);
     magnet.render(window);
 
+    //Pig Updates
     pig.changePos(window, deltaTime);
     pig.render(window);
 
+    //Left Hand Updates
     if (leftHand.retracting == false)
         leftHand.moveHand(coins);
     else
         leftHand.retractHand();
+
     leftHand.magnetPhysics(magnet);
     leftHand.render(window);
 
+    //Right Hand Updates
     if (rightHand.retracting == false)
         rightHand.moveHand(coins);
     else 
         rightHand.retractHand();
+
     rightHand.magnetPhysics(magnet);
     rightHand.render(window);
 
-    //UI Updates
+    //Text UI
     Balance.update("euro", false, balance);
     Balance.render(window, windowWidth / 2 - 55.f, windowHeight - 50.f);
 
@@ -247,10 +243,12 @@ void Level1(sf::RenderWindow& window, int windowHeight, int windowWidth, std::ve
 
 void Level2(sf::RenderWindow& window, int windowHeight, int windowWidth, Magnet& wallet, sf::Sprite& background, TextUI Score, TextUI& Balance, std::vector<int> toErase, std::vector<Coin>& coins, float dirLeft, float dirRight, float& CurrentCoinSpawnR, float& coinSpawnR, int& balance, int& finalBalance, int& coinCounter, Transition& transition, bool hasStartedFall, bool& gameFinished, sf::Time deltaTime, sf::Sound& CoinInHandSound, sf::Sound& CoinCollectSound)
 {
+    //Background
     window.draw(background);
 
     CurrentCoinSpawnR += deltaTime.asSeconds();
 
+    //Spawn Coins
     if (CurrentCoinSpawnR >= coinSpawnR)
     {
         if (coinCounter < balance)
@@ -264,7 +262,7 @@ void Level2(sf::RenderWindow& window, int windowHeight, int windowWidth, Magnet&
     //Coin Updates
     for (int i = 0; i < coins.size(); i++)
     {
-        coins[i].fall_physics();
+        coins[i].fallPhysics();
         coins[i].render(window);
 
         //Collision with Wallet
@@ -282,31 +280,33 @@ void Level2(sf::RenderWindow& window, int windowHeight, int windowWidth, Magnet&
         }
     }
 
+    //Coin Destroyer
     for (int i = toErase.size() - 1; i >= 0; i--)
     {
         coins.erase(coins.begin() + toErase[i]);
         hasStartedFall = true;
     }
 
-    //Movement Restrictions For Player
+    //Movement Restrictions For Wallet
     if (wallet.get_pos().x <= 0.f + wallet.magnetsprite.getTexture()->getSize().x / 2 * wallet.scale)
         dirLeft = 0.f;
 
     if (wallet.get_pos().x >= windowWidth - wallet.magnetsprite.getTexture()->getSize().x / 2 * wallet.scale)
         dirRight = 0.f;
 
-    //Objects Updates
+    //Wallet Updates
     wallet.changeHorizontal(dirRight, dirLeft);
     wallet.render(window);
 
-    //UI Updates
+    //Text UI
     Score.update("Out Of:", false, finalBalance);
     Score.render(window, windowWidth / 2 - 100.f, windowHeight - 120.f);
 
     Balance.update("Euro", false, balance);
     Balance.render(window, windowWidth / 2 - 100.f, windowHeight - 50.f);
 
-    if (coins.size() == 0.f && hasStartedFall == true) //Check for avoiding running fade out at start.
+    //Check for avoiding running fade out at start.
+    if (coins.size() == 0.f && hasStartedFall == true)
     {
         gameFinished = true;
     }
@@ -318,8 +318,10 @@ void Level2(sf::RenderWindow& window, int windowHeight, int windowWidth, Magnet&
 
 void Outro(sf::RenderWindow& window, int windowHeight, int windowWidth, int finalBalance, TextUI& GameOver, TextUI& FinalScore, Button& Restart, Button& Exit, Transition& transition, sf::Vector2i mousePosWindow, sf::Time deltaTime)
 {
+    //Background
     window.clear(sf::Color::White);
 
+    //Text UI
     GameOver.update("Game Over", true, NULL);
     GameOver.render(window, windowWidth / 2 - 450.f, 30.f);
 
@@ -340,7 +342,7 @@ void Outro(sf::RenderWindow& window, int windowHeight, int windowWidth, int fina
 
 int main()
 {
-    //Window & General Game Settings
+    //Window & Game Settings
     int windowHeight = 720;
     int windowWidth = 1280;
     sf::RenderWindow window(sf::VideoMode(windowWidth, windowHeight), "Polarized Profits");
@@ -352,15 +354,12 @@ int main()
     window.setFramerateLimit(60);
     window.setVerticalSyncEnabled(false);
 
-    sf::Vector2i mousePosWindow = sf::Mouse::getPosition(window);
-    sf::Clock clock;
-    sf::Time deltaTime;
-
     //SFX
-    sf::SoundBuffer MenuSoundtrack;
-    MenuSoundtrack.loadFromFile("Assets/SFX/Soundtracks/MenuSoundtrack.wav");
-    sf::Sound MenuSoundtrackSound;
-    MenuSoundtrackSound.setBuffer(MenuSoundtrack);
+    sf::SoundBuffer Soundtrack;
+    Soundtrack.loadFromFile("Assets/SFX/Soundtracks/BadPiggiesTheme.wav");
+    sf::Sound SoundtrackSound;
+    SoundtrackSound.setVolume(35);
+    SoundtrackSound.setBuffer(Soundtrack);
 
     sf::SoundBuffer ButtonPress;
     ButtonPress.loadFromFile("Assets/SFX/Sounds/ButtonPress.wav");
@@ -377,27 +376,22 @@ int main()
     sf::Sound CoinInHandSound;
     CoinInHandSound.setBuffer(CoinInHand);
 
-    //Game Logic
+    //General Game Logic
+    sf::Vector2i mousePosWindow = sf::Mouse::getPosition(window);
+    sf::Clock clock;
+    sf::Time deltaTime;
+
+    std::vector<int> toErase;
+
     float dirLeft = 0.f, dirRight = 0.f, dirUp = 0.f, dirDown = 0.f; //Directions For Magnet Movement
     bool gameFinished = false;
-    std::vector<int> toErase;
     bool startSong = false;
-   
-    //Level 1
-    float maxRoundTime = 61.f;
-    float currentRoundTime = maxRoundTime;
-    float polarityPressed = false;
-    int balance = 0;
-    bool reload = false;
 
-    //Level 2
-    int finalBalance = 0;
-    int coinCounter = 0;
-    bool hasStartedFall = false; //Check for Fade Out Level 2
 
-    //Main Menu
+    //Main Menu Game Objects
     std::vector<Coin> mainMenuCoins;
-    float coinSpawnRMenu = 0.15f; //Spawnrate For Coins Main Menu
+
+    float coinSpawnRMenu = 0.15f;
 
     TextUI GameTitle1(sf::Color(199, 52, 52, 255), 130);
     TextUI GameTitle2(sf::Color(61, 62, 210, 255), 140);
@@ -407,25 +401,43 @@ int main()
     Button Start(0.26f, 0.21f, sf::Color::Blue, sf::Color::White, 35);
     Button Exit(0.26f, 0.21f, sf::Color::Red, sf::Color::White, 35);
 
-    //Tutorial
+
+    //Tutorial Game Objects
     sf::Texture* tutorial;
     sf::Sprite tutorialsprite;
-
     tutorial = new sf::Texture;
     tutorial->loadFromFile("Assets/Sprites/Backgrounds/Tutorial.png");
     tutorialsprite.setTexture(*tutorial);
 
     Button Proceed(0.26f, 0.21f, sf::Color::Blue, sf::Color::White, 35);
 
-    //Level1
+
+    //Outro Game Objects
+    TextUI GameOver(sf::Color(199, 52, 52, 255), 80);
+    TextUI FinalScore(sf::Color(61, 62, 210, 255), 80);
+
+    Button Restart(0.26f, 0.21f, sf::Color::Blue, sf::Color::White, 35);
+
+
+    //Level 1 Logic
+    float maxRoundTime = 61.f; //Level 1 Duration
+    float currentRoundTime = maxRoundTime;
+    float polarityPressed = false;
+    int balance = 0; //Coin Counter
+    bool reload = false;
+
+
+    //Level 1 Game Objects
     std::vector<Coin> coins;
 
-    float coinSpawnR1 = 0.6f; //Spawnrate For Coins
+    float coinSpawnR1 = 0.6f;
     float CurrentCoinSpawnR = 0.f;
 
     Background background(0.f, 0.f);
+
     TextUI Balance(sf::Color::White, 45);
     TextUI Timer(sf::Color::White, 50);
+
     Transition transition(windowHeight, windowWidth);
 
     Magnet magnet(600, 500, 5.f, false);
@@ -433,7 +445,15 @@ int main()
     Hand leftHand(false, windowHeight, windowWidth);
     Hand rightHand(true, windowHeight, windowWidth);
 
-    //Level2
+
+    //Level 2 Logic
+    int finalBalance = 0;
+    int coinCounter = 0;
+    bool hasStartedFall = false;
+    float coinSpawnR2 = 0.8f;
+
+
+    //Level 2 Game Objects
     sf::Texture* Level2Background;
     sf::Sprite Level2BackgroundSprite;
 
@@ -445,20 +465,23 @@ int main()
     Magnet wallet(600, 550, 8.f, true);
 
     std::vector<Coin> pigCoins;
-    float coinSpawnR2 = 0.8f; //Spawnrate For Coins
-
-    //Outro
-    TextUI GameOver(sf::Color(199, 52, 52, 255), 80);
-    TextUI FinalScore(sf::Color(61, 62, 210, 255), 80);
-    Button Restart(0.26f, 0.21f, sf::Color::Blue, sf::Color::White, 35);
 
 
     while (window.isOpen())
     {
         mousePosWindow = sf::Mouse::getPosition(window);
 
-        //Delta Time
         deltaTime = clock.restart();
+
+        //Soundtrack Check
+        if (startSong == false)
+        {
+            startSong = true;
+            SoundtrackSound.play();
+        }
+
+        if (SoundtrackSound.getStatus() == sf::Sound::Stopped)
+            startSong = false;
 
         sf::Event event;
 
@@ -475,7 +498,7 @@ int main()
                 polarityPressed = true;
             }
 
-            //Magnet Movement
+            //Magnet Movement, Input
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
                 dirLeft = 1.f;
 
@@ -488,7 +511,7 @@ int main()
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
                 dirDown = 1.f;
 
-            //Magnet Movement, Button Released, Reset Values
+            //Magnet Movement, Key Release
             if (event.type == sf::Event::KeyReleased)
             {
                 if (event.key.code == sf::Keyboard::Space)
@@ -570,22 +593,20 @@ int main()
             }
         }
 
-        //Finish Game Conditions
         if (gameFinished == true && transition.currentscene != 4)
         {
             if (transition.currentscene == 2)
-                transition.isFadeOut = true; //From Level 1 To Outro
+                transition.isFadeOut = true; //Level 1 To Outro
 
             else if (transition.currentscene == 3)
-                transition.isFadeOut = true; //From Level 2 To Outro
+                transition.isFadeOut = true; //Level 2 To Outro
         }
 
         //Scene Manager 
         transition.fadeOut(deltaTime);
-
         switch (transition.currentscene) {
             case 0:
-                MainMenu(window, windowHeight, windowWidth, toErase, mainMenuCoins, CurrentCoinSpawnR, coinSpawnRMenu, GameTitle1, GameTitle2, Author, Breda, Start, Exit, NULL, transition, mousePosWindow, MenuSoundtrackSound, startSong, deltaTime);
+                MainMenu(window, windowHeight, windowWidth, toErase, mainMenuCoins, CurrentCoinSpawnR, coinSpawnRMenu, GameTitle1, GameTitle2, Author, Breda, Start, Exit, NULL, transition, mousePosWindow, deltaTime);
                 break;
             case 1:
                 Tutorial(window, windowHeight, windowWidth, Proceed, tutorialsprite, transition, mousePosWindow, deltaTime);

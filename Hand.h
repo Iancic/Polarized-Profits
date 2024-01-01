@@ -23,7 +23,7 @@ public:
 	bool changeTexture = true;
 
 	int timer = 0.1f;
-	int moveSpeed = 1.f;
+	int moveSpeed = 2.f;
 	int retractSpeed = 4.f;
 	int randomCoinPos;
 

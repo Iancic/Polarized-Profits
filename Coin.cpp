@@ -3,20 +3,26 @@
 Coin::Coin(int type, float vel_x, float vel_y, int windowWidth, int windowHeight)
 {
 	coinType = type;
+	vel.x = vel_x;
+	vel.y = vel_y;
+
+	//Coin Value By Type
+	if (coinType == 0 || coinType == 2)
+		value = 3;
+
+	else if (coinType == 1)
+		value = 1;
+
+	else if (coinType == 3)
+		value = 5;
 
 	initTexture();
 	initSprite();
 	spawnCoin(windowWidth, windowHeight);
-
-	vel.x = vel_x;
-	vel.y = vel_y;
 }
 
 void Coin::initTexture()
 {
-	blurredCoin = new sf::Texture;
-	blurredCoin->loadFromFile("Assets/Sprites/Coins/SilverCoin.png");
-
 	coinCopper = new sf::Texture;
 	coinCopper->loadFromFile("Assets/Sprites/Coins/CopperCoin.png");
 
@@ -29,26 +35,14 @@ void Coin::initTexture()
 
 void Coin::initSprite()
 {
-	if (coinType == 0)
-	{
-		sprite.setTexture(*blurredCoin);
-		value = 0;
-	}
-	if (coinType == 1)
-	{
-		sprite.setTexture(*coinCopper);
-		value = 1;
-	}
-	else if (coinType == 2)
-	{
+	if (coinType == 0 || coinType == 2)
 		sprite.setTexture(*coinSilver);
-		value = 2;
-	}
+
+	else if (coinType == 1)
+		sprite.setTexture(*coinCopper);
+
 	else if (coinType == 3)
-	{
 		sprite.setTexture(*coinGold);
-		value = 3;
-	}
 
 	sprite.setScale(scale, scale);
 	sprite.setOrigin(sprite.getTexture()->getSize().x / 2, sprite.getTexture()->getSize().y / 2);
@@ -62,7 +56,7 @@ void Coin::render(sf::RenderWindow& window)
 
 void::Coin::spawnCoin(int windowWidth, int windowHeight)
 {
-	//If the coins is not a main menu coin then spawn it with bounds. Else spawn coin on full screen.
+	//Coin Spawn Based On Box Offset
 	if (coinType != 0)
 	{
 		float boundsScale = 0.15f;
@@ -77,6 +71,7 @@ void::Coin::spawnCoin(int windowWidth, int windowHeight)
 		pos.y = -200.f;
 	}
 
+	//Main Menu Coin Spawn
 	else
 	{
 		pos.x = static_cast<float>(rand() % windowWidth);
@@ -85,13 +80,11 @@ void::Coin::spawnCoin(int windowWidth, int windowHeight)
 
 }
 
-void Coin::update_physics(Magnet& s)
+void Coin::updatePhysics(Magnet& s)
 {
-	//Lenght between Magnet and Coin on X and Y.
+	//Distance
 	float distance_x = s.get_pos().x - pos.x;
 	float distance_y = s.get_pos().y - pos.y;
-
-	//Pythagoras
 	float distance = sqrt(distance_x * distance_x + distance_y * distance_y);
 
 	if (distance < 330.f)
@@ -124,20 +117,11 @@ void Coin::update_physics(Magnet& s)
 	}
 
 	else
-	{
-		//If Coin Is Not Attracted Then It just falls.
-		vel.y += fallSpeed;
-		pos.y += vel.y;
-	}
+		fallPhysics();
 }
 
-void Coin::fall_physics()
+void Coin::fallPhysics()
 {
 	vel.y += fallSpeed;
 	pos.y += vel.y * 2.f;
-}
-
-sf::Vector2f Coin::get_pos()
-{
-	return pos;
 }

@@ -16,14 +16,13 @@ public:
 	sf::Texture* coinCopper;
 	sf::Texture* coinSilver;
 	sf::Texture* coinGold;
-	sf::Texture* blurredCoin;
 	sf::Sprite sprite;
 
 	float scale = 0.12f;
 	float fallSpeed = 0.005f;
 
 	int value;
-	int coinType;
+	int coinType; // 0 for Main Menu, 1 Cooper, 2 Silver, 3 Gold
 
 	Coin(int type, float vel_x, float vel_y, int windowWidth, int windowHeight);
 
@@ -35,9 +34,7 @@ public:
 
 	void spawnCoin(int windowWidth, int windowHeight);
 
-	void update_physics(Magnet& s);
+	void updatePhysics(Magnet& s);
 
-	void fall_physics();
-
-	sf::Vector2f get_pos();
+	void fallPhysics();
 };
