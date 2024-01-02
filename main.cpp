@@ -366,7 +366,7 @@ int main()
     int windowHeight = 720;
     int windowWidth = 1280;
     sf::VideoMode mode(windowWidth, windowHeight);
-    sf::RenderWindow window(mode, "Polarized Profits");
+    sf::RenderWindow window(mode, "Polarized Profits", sf::Style::Close);
 
     sf::Image icon;
     icon.loadFromFile("Assets/Sprites/UI/Icon.png");
