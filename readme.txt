@@ -8,7 +8,7 @@ Font: Dilo World
 https://github.com/Iancic/Polarized-Profits
 https://iancic.itch.io/polarized-profits
 
-While coins are dropped from the top of the screen, use your magnet to collect money into the piggy bank. Watch out for the thief's hands, they can only be repelled by using the blue magnet. After 60 seconds, break the piggy bank and try catching as many coins into your wallet. How much profit can you polarize?
+You have 60 seconds to bring as many coins as you can in the piggy bank. The piggy bank will move randomly across the screen, so you will need to use the magnet to capture and direct the falling coins into the piggy bank. But watch out, the thief hands are coming to steal your coins! Repel them by changing the polarity of your magnet, but do so carefully, because you will also repel the coins in the process! After the 60 seconds are over, it is time to transfer as many captured coins as you can from the piggy bank into your wallet. The coins will fall from the top of the screen and you will need to move your wallet left and right to catch them. Whatever you can catch in your wallet are your polarized profits! Good luck!
 
 How To Play:
 W, A, S, D - Move The Magnet / Wallet

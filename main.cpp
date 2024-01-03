@@ -104,7 +104,7 @@ void Tutorial(sf::RenderWindow& window, int windowHeight, int windowWidth, Butto
     transition.render(window);
 }
 
-void Level1(sf::RenderWindow& window, int windowHeight, int windowWidth, std::vector<int> toErase, Background background, Transition& transition, TextUI& Balance, TextUI& Timer, Magnet& magnet, Hand& leftHand, Hand& rightHand, std::vector<Coin>& coins, Pig& pig, int& balance, float dirLeft, float dirUp, float dirDown, float dirRight, float& CurrentCoinSpawnR, float& coinSpawnR, float currentRoundTime, sf::Time deltaTime, bool& reload, sf::Sound& CoinInHandSound, sf::Sound& CoinCollectSound)
+void Level1(sf::RenderWindow& window, int windowHeight, int windowWidth, std::vector<int> toErase, Background background, Transition& transition, TextUI& Balance, TextUI& Timer, Magnet& magnet, Hand& leftHand, Hand& rightHand, std::vector<Coin>& coins, Pig& pig, int& balance, int& finalBalance, float dirLeft, float dirUp, float dirDown, float dirRight, float& CurrentCoinSpawnR, float& coinSpawnR, float currentRoundTime, sf::Time deltaTime, bool& reload, sf::Sound& CoinInHandSound, sf::Sound& CoinCollectSound)
 {
     //Background
     background.render(window);
@@ -119,6 +119,7 @@ void Level1(sf::RenderWindow& window, int windowHeight, int windowWidth, std::ve
 
         //Reset Game Logic
         balance = 0.f;
+        finalBalance = 0.f;
         rightHand.retracting = true;
         leftHand.retracting = true;
         magnet.placePos(600.f, 500.f);
@@ -633,7 +634,7 @@ int main()
                 Tutorial(window, windowHeight, windowWidth, Proceed, tutorialsprite, transition, mousePosWindow, deltaTime);
                 break;
             case 2:
-                Level1(window, windowHeight, windowWidth, toErase, background, transition, Balance, Timer, magnet, leftHand, rightHand, coins, pig, balance, dirLeft, dirUp, dirDown, dirRight, CurrentCoinSpawnR, coinSpawnR1, currentRoundTime, deltaTime, reload, CoinInHandSound, CoinCollectSound);
+                Level1(window, windowHeight, windowWidth, toErase, background, transition, Balance, Timer, magnet, leftHand, rightHand, coins, pig, balance, finalBalance, dirLeft, dirUp, dirDown, dirRight, CurrentCoinSpawnR, coinSpawnR1, currentRoundTime, deltaTime, reload, CoinInHandSound, CoinCollectSound);
                 break;
             case 3:
                 Level2(window, windowHeight, windowWidth, wallet, Level2BackgroundSprite, Score, Balance, toErase, pigCoins, dirLeft, dirRight, CurrentCoinSpawnR ,coinSpawnR2, balance, finalBalance, coinCounter, transition, hasStartedFall, gameFinished, deltaTime, CoinInHandSound, CoinCollectSound);
